@@ -7,7 +7,7 @@ import 'package:logging/logging.dart';
 
 import 'app_bloc.dart';
 import 'app_state.dart';
-import 'home.dart';
+import 'ui/home.dart';
 
 final Logger logger = Logger('AlgoWallet');
 

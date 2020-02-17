@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:manta_dart/messages.dart';
 import 'package:openapi/model/account.dart';
 
 abstract class AppEvent extends Equatable {
@@ -26,6 +27,11 @@ class SendSheetDismissed extends AppEvent {
   List<Object> get props => [];
 }
 
+class MantaSheetDismissed extends AppEvent {
+  @override
+  List<Object> get props => [];
+}
+
 class Send extends AppEvent {
   final int amount;
   final String destination;
@@ -40,3 +46,26 @@ class Send extends AppEvent {
     return 'Send Event - $amount to $destination';
   }
 }
+
+class ParseURL extends AppEvent {
+  final String url;
+
+  ParseURL(this.url);
+
+  @override
+  List<Object> get props => [url];
+}
+
+class ScanQR extends AppEvent {
+  @override
+  List<Object> get props => [];
+}
+
+//class SendMantaShow extends AppEvent {
+//  final Merchant merchant;
+//
+//  SendMantaShow({this.merchant});
+//
+//  @override
+//  List<Object> get props => [];
+//}

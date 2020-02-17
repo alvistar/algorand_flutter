@@ -15,6 +15,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.5.2"
+  asn1lib:
+    dependency: transitive
+    description:
+      name: asn1lib
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.5.15"
   async:
     dependency: transitive
     description:
@@ -106,6 +113,13 @@ packages:
       relative: true
     source: path
     version: "0.0.0"
+  decimal:
+    dependency: transitive
+    description:
+      name: decimal
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.5"
   equatable:
     dependency: "direct main"
     description:
@@ -113,6 +127,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0"
+  event_bus:
+    dependency: transitive
+    description:
+      name: event_bus
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.1"
   fixnum:
     dependency: transitive
     description:
@@ -193,6 +214,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.12"
+  json_annotation:
+    dependency: transitive
+    description:
+      name: json_annotation
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.1"
   logging:
     dependency: "direct main"
     description:
@@ -200,6 +228,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.11.4"
+  manta_dart:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: cd6e2076cde6c2d5860e341ac674de661306abd8
+      url: "git://github.com/appiapay/manta-dart.git"
+    source: git
+    version: "0.0.3"
   matcher:
     dependency: transitive
     description:
@@ -214,6 +251,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.8"
+  mqtt_client:
+    dependency: transitive
+    description:
+      name: mqtt_client
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.6.3"
   msgpack_dart:
     dependency: transitive
     description:
@@ -284,6 +328,22 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.5"
+  rational:
+    dependency: transitive
+    description:
+      name: rational
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.8"
+  rsa_pkcs:
+    dependency: transitive
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: "88f6eecd291ddd6ad6d1221fb1cb9577983c329b"
+      url: "git://github.com/amaurel/rsa_pkcs.git"
+    source: git
+    version: "1.1.0"
   rxdart:
     dependency: transitive
     description:
@@ -345,6 +405,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.6"
+  uuid:
+    dependency: transitive
+    description:
+      name: uuid
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.3"
   vector_math:
     dependency: transitive
     description:

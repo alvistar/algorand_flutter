@@ -24,6 +24,9 @@ dependencies:
   equatable: ^1.1.0
   logging: ^0.11.4
   flutter_barcode_scanner: ^0.1.7
+  manta_dart:
+    git: git://github.com/appiapay/manta-dart.git
+
 
   openapi:
     path: ../algorand-jaguar

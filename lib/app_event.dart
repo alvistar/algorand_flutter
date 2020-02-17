@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:openapi/model/account.dart';
 
 abstract class AppEvent extends Equatable {
@@ -23,4 +24,19 @@ class SendSheetShow extends AppEvent {
 class SendSheetDismissed extends AppEvent {
   @override
   List<Object> get props => [];
+}
+
+class Send extends AppEvent {
+  final int amount;
+  final String destination;
+
+  Send({this.amount, this.destination});
+
+  @override
+  List<Object> get props => [amount, destination];
+
+  @override
+  String toString() {
+    return 'Send Event - $amount to $destination';
+  }
 }

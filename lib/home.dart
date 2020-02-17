@@ -12,13 +12,11 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppBloc appBloc = BlocProvider.of<AppBloc>(context);
 
-    showSendSheet (BuildContext context) async {
-      final result = await  showModalBottomSheet(
+    showSendSheet(BuildContext context) async {
+      final result = await showModalBottomSheet(
           context: context,
           builder: (context) =>
-              BlocProvider.value(
-                  value: appBloc,
-                  child: SendSheet()));
+              BlocProvider.value(value: appBloc, child: SendSheet()));
 
       // This is not the best as breaking logic of events to change state
       appBloc.add(SendSheetDismissed());
@@ -28,8 +26,15 @@ class HomePage extends StatelessWidget {
         appBar: AppBar(title: Text('Algorand')),
         body: BlocListener<AppBloc, AppState>(
           listener: (context, state) {
-            if (state is SendSheetState) {
+            if (state is SendSheetAppState) {
               showSendSheet(context);
+            }
+            if (state.runtimeType == InitialAppState) {
+              Navigator.popUntil(context, (route) {
+                if (route.isFirst)
+                  return true;
+                return false;
+              });
             }
           },
           child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [

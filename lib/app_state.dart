@@ -1,4 +1,3 @@
-import 'package:algorand_flutter/main.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class AppState extends Equatable {
@@ -15,7 +14,7 @@ class InitialAppState extends AppState {
   List<Object> get props => [amount];
 }
 
-class SendSheetState extends InitialAppState {
-  SendSheetState(int amount) : super(amount);
+class SendSheetAppState extends InitialAppState {
+  SendSheetAppState(int amount) : super(amount);
 
 }

@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:manta_dart/messages.dart';
+import 'package:algo_explorer_api/algo_explorer_api.dart';
 
 import '../app_bloc.dart';
 import '../app_state.dart';
@@ -48,42 +49,59 @@ class HomePage extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(title: Text('Algorand')),
         body: BlocListener<AppBloc, AppState>(
-          // Do it only if we are moving forward
           condition: (previous, current) {
-            if (previous.runtimeType == InitialAppState &&
-                current.runtimeType == SendSheetAppState) {
-              return true;
+            // Conditions to avoid opening two SendSheet
+
+            if (current is HomeSendSheetState &&
+                previous is HomeSendSheetState) {
+              return false;
             }
 
-            if (previous.runtimeType == SendSheetAppState &&
-                current.runtimeType == MantaSheetAppState) {
-              return true;
+            if (current is HomeSendSheetState &&
+                previous is  HomeMantaSheetState) {
+              return false;
             }
 
-            return false;
+            return true;
           },
-
           listener: (context, state) {
-            if (state.runtimeType == SendSheetAppState) {
+            if (state is HomeInitialState) {
+              // Ensure we are on InitialAppState
+              Navigator.popUntil(context, (route) => route.isFirst);
+            }
+
+            if (state is HomeSendSheetState) {
               showSendSheet(
                   context: context,
-                  amount: (state as SendSheetAppState).destAmount,
-                  address: (state as SendSheetAppState).destAddress);
+                  amount: state.destAmount,
+                  address: state.destAddress);
             }
 
-            if (state.runtimeType == MantaSheetAppState) {
-              final s = state as MantaSheetAppState;
+            if (state is  HomeMantaSheetState) {
               showMantaSheet(
                   context: context,
-                  merchant: s.merchant,
-                  destination: s.destination);
+                  merchant: state.merchant,
+                  destination: state.destination);
             }
           },
           child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-            Center(
-              child:
-                  Text((appBloc.state as InitialAppState).balance.toString()),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Text((appBloc.state as HomeState).balance.toString()),
+                  assetDropdown(
+                      current: (appBloc.state as HomeState).currentAsset,
+                      assets: (appBloc.state as HomeState).assets,
+                      onChanged: (value) {
+                        appBloc.add(ChangeAsset(value));
+                      })
+                ]),
             ),
+            Expanded(
+                child: transactionList(
+                    (appBloc.state as HomeState).transactions)),
             RaisedButton(
               child: const Text('SEND'),
               onPressed: () {
@@ -93,4 +111,35 @@ class HomePage extends StatelessWidget {
           ]),
         ));
   }
+}
+
+assetDropdown({
+  String current,
+  List<String> assets,
+  void Function(String value) onChanged}) {
+
+  return DropdownButton<String>(
+      hint: Text('Select currency'),
+      value: current,
+      icon: Icon(Icons.arrow_downward),
+      iconSize: 24,
+      elevation: 16,
+      items: assets.map((e) =>
+          DropdownMenuItem (
+            value: e,
+            child: Text(e),
+      )).toList(),
+      onChanged: onChanged);
+}
+
+transactionList(List transactions) {
+  final pts = transactions.whereType<TransactionPay>();
+  final listIter = pts.map((entry) => ListTile(
+        title: Text(entry.to),
+        subtitle: Text(entry.amount.toString()),
+      ));
+
+  return ListView(
+    children: listIter.toList(),
+  );
 }

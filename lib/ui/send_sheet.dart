@@ -16,10 +16,10 @@ class SendSheet extends StatefulWidget {
   SendSheet({key, this.destAmount, this.destAddress}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => SendSheetState();
+  State<StatefulWidget> createState() => SendSheetUIState();
 }
 
-class SendSheetState extends State<SendSheet> {
+class SendSheetUIState extends State<SendSheet> {
   final _destination = TextEditingController();
   final _amount = TextEditingController();
 
@@ -36,7 +36,7 @@ class SendSheetState extends State<SendSheet> {
     final AppBloc appBloc = BlocProvider.of<AppBloc>(context);
     return BlocListener<AppBloc, AppState>(
         listener: (context, state) {
-          if (state is SendSheetAppState) {
+          if (state is HomeSendSheetState) {
             _amount.text = state.destAmount.toString();
             _destination.text = state.destAddress;
           }

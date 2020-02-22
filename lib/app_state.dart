@@ -1,38 +1,70 @@
-import 'package:equatable/equatable.dart';
 import 'package:manta_dart/messages.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-abstract class AppState extends Equatable {
-  @override
-  List<Object> get props => [];
+part 'app_state.freezed.dart';
+
+class AppState {}
+
+@freezed
+abstract class HomeState with _$HomeState implements AppState {
+  factory HomeState(
+      {int balance,
+      String unit,
+      @Default(const <String>[])List<String> assets,
+      @Default(const []) List transactions,
+      String currentAsset}) = HomeInitialState;
+
+  factory HomeState.SendSheetState(
+      {int balance,
+      String unit,
+      List<String> assets,
+      List transactions,
+      String currentAsset,
+      int destAmount,
+      String destAddress}) = HomeSendSheetState;
+
+  factory HomeState.MantaSheetState(
+      {int balance,
+      String unit,
+      List<String> assets,
+      List transactions,
+      String currentAsset,
+      Merchant merchant,
+      Destination destination}) = HomeMantaSheetState;
 }
 
-class InitialAppState extends AppState {
-  final int balance;
+extension Utils on HomeState {
+  HomeSendSheetState toSendSheet({int destAmount, String destAddress}) {
+    return HomeState.SendSheetState(
+        balance: balance,
+        unit: unit,
+        assets: assets,
+        transactions: transactions,
+        currentAsset: currentAsset,
+        destAmount: destAmount,
+        destAddress: destAddress);
+  }
 
-  InitialAppState(this.balance);
+  HomeSendSheetState toMantaSheet({Merchant merchant,
+    Destination destination}) {
+    return HomeState.MantaSheetState(
+        balance: balance,
+        unit: unit,
+        assets: assets,
+        transactions: transactions,
+        currentAsset: currentAsset,
+        destination: destination,
+        merchant: merchant);
+  }
 
-  @override
-  List<Object> get props => [balance];
+  HomeInitialState toInitialState() {
+    return HomeState(
+      balance: balance,
+      unit: unit,
+      assets: assets,
+      transactions: transactions,
+      currentAsset: currentAsset,
+    );
+  }
 }
 
-class SendSheetAppState extends InitialAppState {
-  final int destAmount;
-  final String destAddress;
-
-  SendSheetAppState({int balance, this.destAddress, this.destAmount})
-      : super(balance);
-
-  @override
-  List<Object> get props => [balance, destAmount, destAddress];
-}
-
-class MantaSheetAppState extends InitialAppState {
-  final Merchant merchant;
-  final Destination destination;
-
-  MantaSheetAppState({int balance, this.merchant, this.destination})
-      : super(balance);
-
-  @override
-  List<Object> get props => [balance, merchant];
-}

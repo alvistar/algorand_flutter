@@ -16,6 +16,15 @@ class AccountInfoUpdate extends AppEvent {
   List<Object> get props => [account];
 }
 
+class TransactionsUpdate extends AppEvent {
+  final List transactions;
+
+  TransactionsUpdate(this.transactions);
+
+  @override
+  List<Object> get props => [transactions];
+}
+
 class SendSheetShow extends AppEvent {
   @override
   List<Object> get props => [];
@@ -61,11 +70,12 @@ class ScanQR extends AppEvent {
   List<Object> get props => [];
 }
 
-//class SendMantaShow extends AppEvent {
-//  final Merchant merchant;
-//
-//  SendMantaShow({this.merchant});
-//
-//  @override
-//  List<Object> get props => [];
-//}
+class ChangeAsset extends AppEvent {
+  final String asset;
+
+  ChangeAsset(this.asset);
+
+  @override
+  List<Object> get props => [asset];
+
+}

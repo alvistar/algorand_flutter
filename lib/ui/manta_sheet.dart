@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dart_algorand/dart_algorand.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:manta_dart/messages.dart';
+import 'package:decimal/decimal.dart';
 
 import '../app_bloc.dart';
 import '../app_state.dart';
@@ -33,15 +36,23 @@ class MantaSheet extends StatelessWidget {
               ),
               TextFormField(
                 enabled: false,
+                maxLines: null,
+                decoration: InputDecoration(labelText: 'ADDRESS'),
+                initialValue: destination.destination_address,
+              ),
+              TextFormField(
+                enabled: false,
                 decoration: InputDecoration(labelText: 'AMOUNT'),
                 initialValue: destination.amount.toString(),
               ),
               RaisedButton(
                 child: Text('SEND'),
                 onPressed: () {
-//                  appBloc.add(Send(
-//                      destination: _destination.text,
-//                      amount: int.parse(_amount.text)));
+                  final amt = (destination.amount * Decimal.fromInt(pow(10,6))).toInt();
+                  print(amt);
+                  appBloc.add(Send(
+                      destination: destination.destination_address,
+                      amount: amt));
                 },
               )
             ]),

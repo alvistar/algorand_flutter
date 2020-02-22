@@ -37,22 +37,20 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     startTimer();
 
     return HomeState(transactions: [], currentAsset: 'algo');
-
   }
 
-  static int getBalanceForAssetIndex ({Account account, int asset}) {
+  static int getBalanceForAssetIndex({Account account, int asset}) {
     final m = account.assets.asMap;
-      return(m[asset.toString()]['amount']);
+    return (m[asset.toString()]['amount']);
   }
 
-  int getAssetIndex (String asset) {
+  int getAssetIndex(String asset) {
     final key = accountInfo.thisassettotal.keys.firstWhere(
             (k) => accountInfo.thisassettotal[k].unitname == asset);
     return int.parse(key);
   }
 
-  int getBalance ([String asset]) {
-
+  int getBalance([String asset]) {
     final s = state as HomeState;
 
     asset ??= s.currentAsset;
@@ -116,7 +114,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         sender: "BICEALPAAJT3VMBTPNE6U44HAJGZKMUZQMYWVEOCGMNDVKQOTRU7OUXAZU",
         receiver: destination,
         fee: params.minFee,
-        note: utf8.encode(note),
+        note: note != null ? utf8.encode(note): null,
         amt: amount,
         first_valid_round: params.lastRound,
         last_valid_round: params.lastRound + 1000,
@@ -129,6 +127,40 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     // Sign transaction
 
     final st = txn.sign(PRIV_KEY);
+
+    // Send transaction
+
+    final rawtxn = base64Decode(msgpack_encode(st));
+
+    final result = await client.rawTransaction(rawtxn);
+
+    logger.info(result);
+  }
+
+  sendAssetTransaction(
+      {int amount, String destination, String note, int index}) async {
+    // Get params for transactions
+
+    final params = (await client.transactionParams()).data;
+
+    final atxn = AssetTransferTxn(
+        sender: "BICEALPAAJT3VMBTPNE6U44HAJGZKMUZQMYWVEOCGMNDVKQOTRU7OUXAZU",
+        index: index,
+        receiver: destination,
+        fee: params.minFee,
+        note: note != null ? utf8.encode(note): null,
+        amt: amount,
+        first_valid_round: params.lastRound,
+        last_valid_round: params.lastRound + 1000,
+        genesis_id: params.genesisID,
+        genesis_hash: params.genesishashb64);
+
+    const PRIV_KEY =
+        "ME81aVXutEYkMKdNjKHKaspLGH9+d2zQdTX8WbVazXwKBEAt4AJnurAze0nqc4cCTZUymYMxapHCMxo6qg6caQ==";
+
+    // Sign transaction
+
+    final st = atxn.sign(PRIV_KEY);
 
     // Send transaction
 
@@ -174,22 +206,14 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       yield* _mapAccountInfoUpdateToState(event);
     } else if (event is TransactionsUpdate) {
       yield (state as HomeState).copyWith(transactions: event.transactions);
-    
     } else if (event is SendSheetShow) {
       yield (state as HomeState).toSendSheet();
-
     } else if (event is SendSheetDismissed) {
       yield (state as HomeState).toInitialState();
     } else if (event is MantaSheetDismissed) {
       yield (state as HomeState).toSendSheet();
     } else if (event is Send) {
-      final note = mantaWallet == null ? null : mantaWallet.session_id;
-
-      sendTransaction(
-          destination: event.destination, amount: event.amount, note: note);
-
-      yield (state as HomeState).toInitialState();
-
+      yield* _mapSendToState(event);
     } else if (event is ScanQR) {
       yield* _mapScanQRtoState(event);
     } else if (event is ChangeAsset) {
@@ -199,6 +223,24 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     }
   }
 
+  Stream<AppState> _mapSendToState(Send event) async* {
+    final note = mantaWallet == null ? null : mantaWallet.session_id;
+    final currentAsset = (state as HomeState).currentAsset;
+
+    if (currentAsset == 'algo') {
+      sendTransaction(
+          destination: event.destination, amount: event.amount, note: note);
+    }
+    else {
+      sendAssetTransaction(
+          destination: event.destination, amount: event.amount, note: note,
+          index: getAssetIndex(currentAsset)
+      );
+    }
+
+    yield (state as HomeState).toInitialState();
+  }
+
   Stream<AppState> _mapAccountInfoUpdateToState(
       AccountInfoUpdate event) async* {
     final assets = <String>['algo'];
@@ -206,8 +248,8 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     accountInfo = event.account;
 
     yield (state as HomeState).copyWith(
-      balance: getBalance(),
-      assets: assets
+        balance: getBalance(),
+        assets: assets
     );
   }
 
@@ -222,7 +264,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       print("Manta Address!");
       mantaWallet = MantaWallet(barcodeScanRes);
       final envelope =
-          await mantaWallet.getPaymentRequest(cryptoCurrency: "ALGO-TESTNET");
+      await mantaWallet.getPaymentRequest(cryptoCurrency: "ALGO-TESTNET");
       final pr = envelope.unpack();
 
       yield (state as HomeState).toMantaSheet(
@@ -250,7 +292,7 @@ DefaultApi init_client() {
   final dio = Dio(options);
   dio.interceptors.add(InterceptorsWrapper(onRequest: (Options options) {
     options.headers['X-Algo-API-Token'] =
-        'b5985ac6e3b5203003b4af1466d799055101fad921c89b9ba004c3dd409d4b22';
+    'b5985ac6e3b5203003b4af1466d799055101fad921c89b9ba004c3dd409d4b22';
   }, onError: (DioError e) {
     if (e.response != null) {
       print(e.response.data);

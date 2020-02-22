@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logging/logging.dart';
 
-import 'app_bloc.dart';
-import 'app_state.dart';
+import 'blocs/app_bloc.dart';
+import 'blocs/app_state.dart';
 import 'ui/home.dart';
 
 final Logger logger = Logger('AlgoWallet');
@@ -21,7 +21,9 @@ class SimpleBlocDelegate extends BlocDelegate {
   @override
   void onTransition(Bloc bloc, Transition transition) {
     super.onTransition(bloc, transition);
-    logger.info(transition);
+    logger.info(
+        "Transation ${transition.currentState.runtimeType} ->"
+        "${transition.nextState.runtimeType} ** event: ${transition.event}");
   }
 
   @override
@@ -49,10 +51,7 @@ class App extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: BlocProvider(
-          create: (_) => AppBloc(),
-          child: AppPage()
-      ),
+      home: BlocProvider(create: (_) => AppBloc(), child: AppPage()),
     );
   }
 }
@@ -61,9 +60,6 @@ class AppPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AppBloc, AppState>(
-      builder: (context, state) => HomePage());
+        builder: (context, state) => HomePage());
   }
 }
-
-
-

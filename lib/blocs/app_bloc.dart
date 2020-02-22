@@ -26,6 +26,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   DefaultApi client;
   Timer accountTimer;
   MantaWallet mantaWallet;
+  Account accountInfo;
 
   @override
   // TODO: implement initialState
@@ -35,9 +36,40 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     getAccountInformation();
     startTimer();
 
-    return HomeState(balance:0, transactions: [], currentAsset: 'algo');
+    return HomeState(transactions: [], currentAsset: 'algo');
 
   }
+
+  static int getBalanceForAssetIndex ({Account account, int asset}) {
+    final m = account.assets.asMap;
+      return(m[asset.toString()]['amount']);
+  }
+
+  int getAssetIndex (String asset) {
+    final key = accountInfo.thisassettotal.keys.firstWhere(
+            (k) => accountInfo.thisassettotal[k].unitname == asset);
+    return int.parse(key);
+  }
+
+  int getBalance ([String asset]) {
+
+    final s = state as HomeState;
+
+    asset ??= s.currentAsset;
+
+    if (accountInfo == null) {
+      return 0;
+    }
+
+    if (asset == 'algo') {
+      return accountInfo.amount;
+    }
+
+    return getBalanceForAssetIndex(
+        account: accountInfo,
+        asset: getAssetIndex(asset));
+  }
+
 
   static List<String> getAssets(Account account) {
     final assets = <String>[];
@@ -74,12 +106,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       }
     }
   }
-
-//    accountApi
-//        .accountsGetLatestByIndex(address, 5)
-//        .then((result) => this.add(TransactionsUpdate(result.data)));
-//
-//    }
 
   sendTransaction({int amount, String destination, String note}) async {
     // Get params for transactions
@@ -167,7 +193,9 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     } else if (event is ScanQR) {
       yield* _mapScanQRtoState(event);
     } else if (event is ChangeAsset) {
-      yield (state as HomeState).copyWith(currentAsset: event.asset);
+      yield (state as HomeState).copyWith(
+          balance: getBalance(event.asset),
+          currentAsset: event.asset);
     }
   }
 
@@ -175,8 +203,10 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       AccountInfoUpdate event) async* {
     final assets = <String>['algo'];
     assets.addAll(getAssets(event.account));
+    accountInfo = event.account;
+
     yield (state as HomeState).copyWith(
-      balance: event.account.amount,
+      balance: getBalance(),
       assets: assets
     );
   }

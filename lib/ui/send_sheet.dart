@@ -1,13 +1,12 @@
+import 'package:algorand_flutter/blocs/app_bloc.dart';
+import 'package:algorand_flutter/blocs/app_event.dart';
+import 'package:algorand_flutter/blocs/app_state.dart';
 import 'package:dart_algorand/dart_algorand.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-
-import '../app_bloc.dart';
-import '../app_state.dart';
-import '../app_event.dart';
 
 class SendSheet extends StatefulWidget {
   final String destAddress;
@@ -62,6 +61,12 @@ class SendSheetUIState extends State<SendSheet> {
                 child: Text('SCAN'),
                 onPressed: () async {
                   appBloc.add(ScanQR());
+                },
+              ),
+              RaisedButton(
+                child: Text('DEMO'),
+                onPressed: () async {
+                  appBloc.add(SendSheetShow());
                 },
               ),
               RaisedButton(

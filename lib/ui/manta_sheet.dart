@@ -1,5 +1,8 @@
 import 'dart:math';
 
+import 'package:algorand_flutter/blocs/app_bloc.dart';
+import 'package:algorand_flutter/blocs/app_event.dart';
+import 'package:algorand_flutter/blocs/app_state.dart';
 import 'package:dart_algorand/dart_algorand.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,9 +12,6 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:manta_dart/messages.dart';
 import 'package:decimal/decimal.dart';
 
-import '../app_bloc.dart';
-import '../app_state.dart';
-import '../app_event.dart';
 
 class MantaSheet extends StatelessWidget {
   final Merchant merchant;

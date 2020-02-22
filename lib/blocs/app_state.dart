@@ -1,5 +1,6 @@
 import 'package:manta_dart/messages.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:openapi/model/account.dart';
 
 part 'app_state.freezed.dart';
 
@@ -9,8 +10,9 @@ class AppState {}
 abstract class HomeState with _$HomeState implements AppState {
   factory HomeState(
       {int balance,
+      Account accountInfo,
       String unit,
-      @Default(const <String>[])List<String> assets,
+      @Default(const <String>[]) List<String> assets,
       @Default(const []) List transactions,
       String currentAsset}) = HomeInitialState;
 
@@ -45,8 +47,8 @@ extension Utils on HomeState {
         destAddress: destAddress);
   }
 
-  HomeSendSheetState toMantaSheet({Merchant merchant,
-    Destination destination}) {
+  HomeSendSheetState toMantaSheet(
+      {Merchant merchant, Destination destination}) {
     return HomeState.MantaSheetState(
         balance: balance,
         unit: unit,
@@ -67,4 +69,3 @@ extension Utils on HomeState {
     );
   }
 }
-

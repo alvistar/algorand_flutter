@@ -26,23 +26,27 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   Account account;
   Configuration configuration;
 
-  AppBloc({@required this.configuration}): super();
-
+  AppBloc({@required this.configuration}) : super();
 
   @override
   AppState get initialState {
     client = init_client();
     accountApi = ExplorerApi().getAccountApi();
-    print (configuration.key);
-    configuration.key ='123';
-    getAccountInformation();
-     startTimer();
+    print(configuration.key);
+    configuration.key = '123';
+    generateNewAccount();
+    return initHome();
 
-     return HomeState(transactions: [], currentAsset: 'algo');
-    //generateNewAccount();
     //return ShowSeedState(address: account.address, privateKey: account.private_key);
     //return SettingsState(address: 'my_address');
     //return ImportSeedState();
+  }
+
+  initHome() {
+    getAccountInformation();
+    startTimer();
+
+    return HomeState(transactions: [], currentAsset: 'algo');
   }
 
   static int getBalanceForAssetIndex({algod.Account account, int asset}) {
@@ -234,12 +238,15 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       yield ShowSeedState(
           address: account.address, privateKey: account.private_key);
     } else if (event is ShowSettings) {
-      yield SettingsState(address: "123", pstate: state);
+      yield SettingsState(address: account.address, pstate: state);
     } else if (event is Back) {
-      if (state is SettingsState) {
-        yield (state as SettingsState).pstate;
+      yield (state as Backable).pstate;
+    } else if (event is ShowImportSeed) {
+      yield ImportSeedState(pstate: state);
+    } else if (event is Forward) {
+      if (state is ShowSeedState) {
+        yield initHome();
       }
-      throw UnimplementedError();
     }
   }
 

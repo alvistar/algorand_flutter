@@ -81,20 +81,33 @@ extension Utils on HomeState {
   }
 }
 
-@freezed
-abstract class ShowSeedState with _$ShowSeedState implements AppState {
-  factory ShowSeedState({BaseState base, String address, String privateKey}) =
-      _ShowSeedState;
+abstract class Backable {
+  AppState get pstate;
 }
 
 @freezed
-abstract class SettingsState with _$SettingsState implements AppState {
+abstract class ShowSeedState
+    with _$ShowSeedState
+    implements AppState, Backable {
+  factory ShowSeedState(
+      {BaseState base,
+      AppState pstate,
+      String address,
+      String privateKey}) = _ShowSeedState;
+}
+
+@freezed
+abstract class SettingsState
+    with _$SettingsState
+    implements AppState, Backable {
   factory SettingsState({BaseState base, AppState pstate, String address}) =
       _SettingsState;
 }
 
-class ImportSeedState implements AppState {
-  final BaseState base;
-
-  ImportSeedState([this.base]);
+@freezed
+abstract class ImportSeedState
+    with _$ImportSeedState
+    implements AppState, Backable {
+  factory ImportSeedState({BaseState base, AppState pstate, String address}) =
+      _ImportSeedState;
 }

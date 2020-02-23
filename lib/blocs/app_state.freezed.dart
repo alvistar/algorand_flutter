@@ -833,17 +833,21 @@ abstract class HomeMantaSheetState implements HomeState {
 
 mixin _$ShowSeedState {
   BaseState get base;
+  AppState get pstate;
   String get address;
   String get privateKey;
 
-  ShowSeedState copyWith({BaseState base, String address, String privateKey});
+  ShowSeedState copyWith(
+      {BaseState base, AppState pstate, String address, String privateKey});
 }
 
 class _$_ShowSeedState implements _ShowSeedState {
-  _$_ShowSeedState({this.base, this.address, this.privateKey});
+  _$_ShowSeedState({this.base, this.pstate, this.address, this.privateKey});
 
   @override
   final BaseState base;
+  @override
+  final AppState pstate;
   @override
   final String address;
   @override
@@ -851,7 +855,7 @@ class _$_ShowSeedState implements _ShowSeedState {
 
   @override
   String toString() {
-    return 'ShowSeedState(base: $base, address: $address, privateKey: $privateKey)';
+    return 'ShowSeedState(base: $base, pstate: $pstate, address: $address, privateKey: $privateKey)';
   }
 
   @override
@@ -860,6 +864,8 @@ class _$_ShowSeedState implements _ShowSeedState {
         (other is _ShowSeedState &&
             (identical(other.base, base) ||
                 const DeepCollectionEquality().equals(other.base, base)) &&
+            (identical(other.pstate, pstate) ||
+                const DeepCollectionEquality().equals(other.pstate, pstate)) &&
             (identical(other.address, address) ||
                 const DeepCollectionEquality()
                     .equals(other.address, address)) &&
@@ -872,17 +878,20 @@ class _$_ShowSeedState implements _ShowSeedState {
   int get hashCode =>
       runtimeType.hashCode ^
       const DeepCollectionEquality().hash(base) ^
+      const DeepCollectionEquality().hash(pstate) ^
       const DeepCollectionEquality().hash(address) ^
       const DeepCollectionEquality().hash(privateKey);
 
   @override
   _$_ShowSeedState copyWith({
     Object base = freezed,
+    Object pstate = freezed,
     Object address = freezed,
     Object privateKey = freezed,
   }) {
     return _$_ShowSeedState(
       base: base == freezed ? this.base : base as BaseState,
+      pstate: pstate == freezed ? this.pstate : pstate as AppState,
       address: address == freezed ? this.address : address as String,
       privateKey:
           privateKey == freezed ? this.privateKey : privateKey as String,
@@ -891,18 +900,24 @@ class _$_ShowSeedState implements _ShowSeedState {
 }
 
 abstract class _ShowSeedState implements ShowSeedState {
-  factory _ShowSeedState({BaseState base, String address, String privateKey}) =
-      _$_ShowSeedState;
+  factory _ShowSeedState(
+      {BaseState base,
+      AppState pstate,
+      String address,
+      String privateKey}) = _$_ShowSeedState;
 
   @override
   BaseState get base;
+  @override
+  AppState get pstate;
   @override
   String get address;
   @override
   String get privateKey;
 
   @override
-  _ShowSeedState copyWith({BaseState base, String address, String privateKey});
+  _ShowSeedState copyWith(
+      {BaseState base, AppState pstate, String address, String privateKey});
 }
 
 mixin _$SettingsState {
@@ -974,4 +989,75 @@ abstract class _SettingsState implements SettingsState {
 
   @override
   _SettingsState copyWith({BaseState base, AppState pstate, String address});
+}
+
+mixin _$ImportSeedState {
+  BaseState get base;
+  AppState get pstate;
+  String get address;
+
+  ImportSeedState copyWith({BaseState base, AppState pstate, String address});
+}
+
+class _$_ImportSeedState implements _ImportSeedState {
+  _$_ImportSeedState({this.base, this.pstate, this.address});
+
+  @override
+  final BaseState base;
+  @override
+  final AppState pstate;
+  @override
+  final String address;
+
+  @override
+  String toString() {
+    return 'ImportSeedState(base: $base, pstate: $pstate, address: $address)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is _ImportSeedState &&
+            (identical(other.base, base) ||
+                const DeepCollectionEquality().equals(other.base, base)) &&
+            (identical(other.pstate, pstate) ||
+                const DeepCollectionEquality().equals(other.pstate, pstate)) &&
+            (identical(other.address, address) ||
+                const DeepCollectionEquality().equals(other.address, address)));
+  }
+
+  @override
+  int get hashCode =>
+      runtimeType.hashCode ^
+      const DeepCollectionEquality().hash(base) ^
+      const DeepCollectionEquality().hash(pstate) ^
+      const DeepCollectionEquality().hash(address);
+
+  @override
+  _$_ImportSeedState copyWith({
+    Object base = freezed,
+    Object pstate = freezed,
+    Object address = freezed,
+  }) {
+    return _$_ImportSeedState(
+      base: base == freezed ? this.base : base as BaseState,
+      pstate: pstate == freezed ? this.pstate : pstate as AppState,
+      address: address == freezed ? this.address : address as String,
+    );
+  }
+}
+
+abstract class _ImportSeedState implements ImportSeedState {
+  factory _ImportSeedState({BaseState base, AppState pstate, String address}) =
+      _$_ImportSeedState;
+
+  @override
+  BaseState get base;
+  @override
+  AppState get pstate;
+  @override
+  String get address;
+
+  @override
+  _ImportSeedState copyWith({BaseState base, AppState pstate, String address});
 }

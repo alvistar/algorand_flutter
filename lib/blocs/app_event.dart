@@ -102,3 +102,8 @@ class Back extends AppEvent {
   @override
   List<Object> get props => [];
 }
+
+class Forward extends AppEvent {
+  @override
+  List<Object> get props => [];
+}

@@ -27,7 +27,11 @@ class ImportSeedUIState extends State<ImportSeed> {
     }
 
     return Scaffold(
-        appBar: AppBar(title: Text('New seed')),
+        appBar: AppBar(title: Text('New seed'),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.white,),
+            onPressed: () { appBloc.add(Back());},
+          ),),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Form(

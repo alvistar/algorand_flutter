@@ -21,6 +21,7 @@ class SendSheet extends StatefulWidget {
 class SendSheetUIState extends State<SendSheet> {
   final _destination = TextEditingController();
   final _amount = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -40,22 +41,44 @@ class SendSheetUIState extends State<SendSheet> {
             _destination.text = state.destAddress;
           }
         },
-        child: Container(
+        child: Form(
+          key: _formKey,
 //          height: 500,
 //          color: Colors.grey,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(children: [
-              TextField(
-                maxLines: null,
-                controller: _destination,
-                decoration: InputDecoration(labelText: 'TO'),
-              ),
-              TextField(
+              TextFormField(
+                  maxLines: null,
+                  controller: _destination,
+                  decoration: InputDecoration(labelText: 'TO'),
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return 'Please enter address';
+                    }
+
+                    if (!is_valid_address(value)) {
+                      return 'This is not a valid address';
+                    }
+                    return null;
+                  }),
+              TextFormField(
                 controller: _amount,
                 keyboardType: TextInputType.number,
                 inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
                 decoration: InputDecoration(labelText: 'AMOUNT'),
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Please enter amount';
+                  }
+
+                  if (int.parse(value) >
+                      (appBloc.state as HomeSendSheetState).balance) {
+                    return 'Not enough balance';
+                  }
+
+                  return null;
+                },
               ),
               RaisedButton(
                 child: Text('SCAN'),
@@ -64,14 +87,12 @@ class SendSheetUIState extends State<SendSheet> {
                 },
               ),
               RaisedButton(
-                child: Text('DEMO'),
-                onPressed: () async {
-                  appBloc.add(SendSheetShow());
-                },
-              ),
-              RaisedButton(
                 child: Text('SEND'),
                 onPressed: () {
+                  if (!_formKey.currentState.validate()) {
+                    return;
+                  }
+
                   appBloc.add(Send(
                       destination: _destination.text,
                       amount: int.parse(_amount.text)));

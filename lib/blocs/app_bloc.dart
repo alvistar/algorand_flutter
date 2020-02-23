@@ -21,17 +21,19 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   Timer accountTimer;
   MantaWallet mantaWallet;
   algod.Account accountInfo;
-
+  Account account;
 
   @override
   AppState get initialState {
     client = init_client();
     accountApi = ExplorerApi().getAccountApi();
-    getAccountInformation();
-     startTimer();
-
-     return HomeState(transactions: [], currentAsset: 'algo');
-    // return NewSeedState();
+//    getAccountInformation();
+//     startTimer();
+//
+//     return HomeState(transactions: [], currentAsset: 'algo');
+    //generateNewAccount();
+    //return ShowSeedState(address: account.address, privateKey: account.private_key);
+    return ImportSeedState();
   }
 
   static int getBalanceForAssetIndex({algod.Account account, int asset}) {
@@ -39,9 +41,23 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     return (m[asset.toString()]['amount']);
   }
 
+  static List<String> getAssets(algod.Account account) {
+    final assets = <String>[];
+
+    account.thisassettotal.forEach((key, value) {
+      assets.add(value.unitname);
+    });
+
+    return assets;
+  }
+
+  generateNewAccount() {
+    account = generate_account();
+  }
+
   int getAssetIndex(String asset) {
-    final key = accountInfo.thisassettotal.keys.firstWhere(
-            (k) => accountInfo.thisassettotal[k].unitname == asset);
+    final key = accountInfo.thisassettotal.keys
+        .firstWhere((k) => accountInfo.thisassettotal[k].unitname == asset);
     return int.parse(key);
   }
 
@@ -59,19 +75,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     }
 
     return getBalanceForAssetIndex(
-        account: accountInfo,
-        asset: getAssetIndex(asset));
-  }
-
-
-  static List<String> getAssets(algod.Account account) {
-    final assets = <String>[];
-
-    account.thisassettotal.forEach((key, value) {
-      assets.add(value.unitname);
-    });
-
-    return assets;
+        account: accountInfo, asset: getAssetIndex(asset));
   }
 
   getAccountInformation() async {
@@ -109,7 +113,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         sender: "BICEALPAAJT3VMBTPNE6U44HAJGZKMUZQMYWVEOCGMNDVKQOTRU7OUXAZU",
         receiver: destination,
         fee: params.minFee,
-        note: note != null ? utf8.encode(note): null,
+        note: note != null ? utf8.encode(note) : null,
         amt: amount,
         first_valid_round: params.lastRound,
         last_valid_round: params.lastRound + 1000,
@@ -143,7 +147,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
         index: index,
         receiver: destination,
         fee: params.minFee,
-        note: note != null ? utf8.encode(note): null,
+        note: note != null ? utf8.encode(note) : null,
         amt: amount,
         first_valid_round: params.lastRound,
         last_valid_round: params.lastRound + 1000,
@@ -213,8 +217,13 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       yield* _mapScanQRtoState(event);
     } else if (event is ChangeAsset) {
       yield (state as HomeState).copyWith(
-          balance: getBalance(event.asset),
-          currentAsset: event.asset);
+          balance: getBalance(event.asset), currentAsset: event.asset);
+    } else if (event is ImportedSeed) {
+      account = Account(
+          private_key: to_private_key(event.seed),
+          address: to_public_key(event.seed));
+      yield ShowSeedState(
+          address: account.address, privateKey: account.private_key);
     }
   }
 
@@ -225,12 +234,12 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     if (currentAsset == 'algo') {
       sendTransaction(
           destination: event.destination, amount: event.amount, note: note);
-    }
-    else {
+    } else {
       sendAssetTransaction(
-          destination: event.destination, amount: event.amount, note: note,
-          index: getAssetIndex(currentAsset)
-      );
+          destination: event.destination,
+          amount: event.amount,
+          note: note,
+          index: getAssetIndex(currentAsset));
     }
 
     yield (state as HomeState).toInitialState();
@@ -242,10 +251,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     assets.addAll(getAssets(event.account));
     accountInfo = event.account;
 
-    yield (state as HomeState).copyWith(
-        balance: getBalance(),
-        assets: assets
-    );
+    yield (state as HomeState).copyWith(balance: getBalance(), assets: assets);
   }
 
   Stream<AppState> _mapScanQRtoState(ScanQR event) async* {
@@ -259,20 +265,18 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       print("Manta Address!");
       mantaWallet = MantaWallet(barcodeScanRes);
       final envelope =
-      await mantaWallet.getPaymentRequest(cryptoCurrency: "ALGO-TESTNET");
+          await mantaWallet.getPaymentRequest(cryptoCurrency: "ALGO-TESTNET");
       final pr = envelope.unpack();
 
-      yield (state as HomeState).toMantaSheet(
-          merchant: pr.merchant,
-          destination: pr.destinations[0]);
+      yield (state as HomeState)
+          .toMantaSheet(merchant: pr.merchant, destination: pr.destinations[0]);
     }
 
     final parsed = parseUrl(barcodeScanRes);
 
     if (parsed != null) {
-      yield (state as HomeState).toSendSheet(
-          destAddress: parsed.address,
-          destAmount: parsed.amount);
+      yield (state as HomeState)
+          .toSendSheet(destAddress: parsed.address, destAmount: parsed.amount);
     }
   }
 }
@@ -287,7 +291,7 @@ algod.AlgodApi init_client() {
   final dio = Dio(options);
   dio.interceptors.add(InterceptorsWrapper(onRequest: (Options options) {
     options.headers['X-Algo-API-Token'] =
-    'b5985ac6e3b5203003b4af1466d799055101fad921c89b9ba004c3dd409d4b22';
+        'b5985ac6e3b5203003b4af1466d799055101fad921c89b9ba004c3dd409d4b22';
   }, onError: (DioError e) {
     if (e.response != null) {
       print(e.response.data);

@@ -47,7 +47,8 @@ class SendSheetUIState extends State<SendSheet> {
 //          color: Colors.grey,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Column(children: [
+            child: Column(
+                children: [
               TextFormField(
                   maxLines: null,
                   controller: _destination,

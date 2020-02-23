@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:algorand_flutter/ui/new_seed.dart';
+import 'package:algorand_flutter/ui/import_seed.dart';
+import 'package:algorand_flutter/ui/show_seed.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -65,9 +66,12 @@ class AppPage extends StatelessWidget {
           if (state is HomeState) {
             return HomePage();
           }
-          if (state is NewSeedState) {
-            return NewSeed();
+          if (state is ShowSeedState) {
+            return ShowSeed();
           }
+          if (state is ImportSeedState) {
+            return ImportSeed();
+          };
           throw UnimplementedError();
     });
   }

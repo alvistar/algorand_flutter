@@ -745,3 +745,66 @@ abstract class HomeMantaSheetState implements HomeState {
       Merchant merchant,
       Destination destination});
 }
+
+mixin _$NewSeedState {
+  String get address;
+  String get privateKey;
+
+  ShowSeedState copyWith({String address, String privateKey});
+}
+
+class _$_NewSeedState implements _ShowSeedState {
+  _$_NewSeedState({this.address, this.privateKey});
+
+  @override
+  final String address;
+  @override
+  final String privateKey;
+
+  @override
+  String toString() {
+    return 'NewSeedState(address: $address, privateKey: $privateKey)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is _ShowSeedState &&
+            (identical(other.address, address) ||
+                const DeepCollectionEquality()
+                    .equals(other.address, address)) &&
+            (identical(other.privateKey, privateKey) ||
+                const DeepCollectionEquality()
+                    .equals(other.privateKey, privateKey)));
+  }
+
+  @override
+  int get hashCode =>
+      runtimeType.hashCode ^
+      const DeepCollectionEquality().hash(address) ^
+      const DeepCollectionEquality().hash(privateKey);
+
+  @override
+  _$_NewSeedState copyWith({
+    Object address = freezed,
+    Object privateKey = freezed,
+  }) {
+    return _$_NewSeedState(
+      address: address == freezed ? this.address : address as String,
+      privateKey:
+          privateKey == freezed ? this.privateKey : privateKey as String,
+    );
+  }
+}
+
+abstract class _ShowSeedState implements ShowSeedState {
+  factory _ShowSeedState({String address, String privateKey}) = _$_NewSeedState;
+
+  @override
+  String get address;
+  @override
+  String get privateKey;
+
+  @override
+  _ShowSeedState copyWith({String address, String privateKey});
+}

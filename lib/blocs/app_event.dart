@@ -1,3 +1,4 @@
+import 'package:algorand_flutter/main.dart';
 import 'package:dart_algorand/algod.dart' as algod;
 import 'package:equatable/equatable.dart';
 
@@ -75,5 +76,16 @@ class ChangeAsset extends AppEvent {
 
   @override
   List<Object> get props => [asset];
+
+}
+
+class ImportedSeed extends AppEvent {
+  final String seed;
+
+  ImportedSeed(this.seed);
+
+  @override
+  List<Object> get props => [seed];
+
 
 }

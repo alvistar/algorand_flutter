@@ -68,7 +68,9 @@ extension Utils on HomeState {
   }
 }
 
-class NewSeedState implements AppState {
-
+@freezed
+abstract class ShowSeedState with _$NewSeedState implements AppState {
+  factory ShowSeedState({String address, String privateKey}) = _ShowSeedState;
 }
 
+class ImportSeedState implements AppState {}

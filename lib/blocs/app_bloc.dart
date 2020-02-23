@@ -8,7 +8,9 @@ import 'package:dart_algorand/dart_algorand.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:manta_dart/manta_wallet.dart';
 import 'package:logging/logging.dart';
+import 'package:meta/meta.dart';
 
+import '../configuration.dart';
 import 'app_event.dart';
 import 'app_state.dart';
 import 'package:dio/dio.dart';
@@ -22,18 +24,25 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   MantaWallet mantaWallet;
   algod.Account accountInfo;
   Account account;
+  Configuration configuration;
+
+  AppBloc({@required this.configuration}): super();
+
 
   @override
   AppState get initialState {
     client = init_client();
     accountApi = ExplorerApi().getAccountApi();
-//    getAccountInformation();
-//     startTimer();
-//
-//     return HomeState(transactions: [], currentAsset: 'algo');
+    print (configuration.key);
+    configuration.key ='123';
+    getAccountInformation();
+     startTimer();
+
+     return HomeState(transactions: [], currentAsset: 'algo');
     //generateNewAccount();
     //return ShowSeedState(address: account.address, privateKey: account.private_key);
-    return ImportSeedState();
+    //return SettingsState(address: 'my_address');
+    //return ImportSeedState();
   }
 
   static int getBalanceForAssetIndex({algod.Account account, int asset}) {
@@ -224,6 +233,13 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           address: to_public_key(event.seed));
       yield ShowSeedState(
           address: account.address, privateKey: account.private_key);
+    } else if (event is ShowSettings) {
+      yield SettingsState(address: "123", pstate: state);
+    } else if (event is Back) {
+      if (state is SettingsState) {
+        yield (state as SettingsState).pstate;
+      }
+      throw UnimplementedError();
     }
   }
 

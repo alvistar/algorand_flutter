@@ -79,6 +79,16 @@ class ChangeAsset extends AppEvent {
 
 }
 
+class ShowImportSeed extends AppEvent {
+  @override
+  List<Object> get props => [];
+}
+
+class ShowSettings extends AppEvent {
+  @override
+  List<Object> get props => [];
+}
+
 class ImportedSeed extends AppEvent {
   final String seed;
 
@@ -86,6 +96,9 @@ class ImportedSeed extends AppEvent {
 
   @override
   List<Object> get props => [seed];
+}
 
-
+class Back extends AppEvent {
+  @override
+  List<Object> get props => [];
 }

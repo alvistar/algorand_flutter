@@ -3,19 +3,28 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'app_state.freezed.dart';
 
-class AppState {}
+@freezed
+abstract class BaseState with _$BaseState {
+  factory BaseState() = _BaseState;
+}
+
+abstract class AppState {
+  BaseState get base;
+}
 
 @freezed
 abstract class HomeState with _$HomeState implements AppState {
   factory HomeState(
-      {int balance,
+      {BaseState base,
+      int balance,
       String unit,
       @Default(const <String>[]) List<String> assets,
       @Default(const []) List transactions,
       String currentAsset}) = HomeInitialState;
 
   factory HomeState.SendSheetState(
-      {int balance,
+      {BaseState base,
+      int balance,
       String unit,
       List<String> assets,
       List transactions,
@@ -24,7 +33,8 @@ abstract class HomeState with _$HomeState implements AppState {
       String destAddress}) = HomeSendSheetState;
 
   factory HomeState.MantaSheetState(
-      {int balance,
+      {BaseState base,
+      int balance,
       String unit,
       List<String> assets,
       List transactions,
@@ -36,6 +46,7 @@ abstract class HomeState with _$HomeState implements AppState {
 extension Utils on HomeState {
   HomeSendSheetState toSendSheet({int destAmount, String destAddress}) {
     return HomeState.SendSheetState(
+        base: base,
         balance: balance,
         unit: unit,
         assets: assets,
@@ -48,6 +59,7 @@ extension Utils on HomeState {
   HomeSendSheetState toMantaSheet(
       {Merchant merchant, Destination destination}) {
     return HomeState.MantaSheetState(
+        base: base,
         balance: balance,
         unit: unit,
         assets: assets,
@@ -59,6 +71,7 @@ extension Utils on HomeState {
 
   HomeInitialState toInitialState() {
     return HomeState(
+      base: base,
       balance: balance,
       unit: unit,
       assets: assets,
@@ -69,8 +82,19 @@ extension Utils on HomeState {
 }
 
 @freezed
-abstract class ShowSeedState with _$NewSeedState implements AppState {
-  factory ShowSeedState({String address, String privateKey}) = _ShowSeedState;
+abstract class ShowSeedState with _$ShowSeedState implements AppState {
+  factory ShowSeedState({BaseState base, String address, String privateKey}) =
+      _ShowSeedState;
 }
 
-class ImportSeedState implements AppState {}
+@freezed
+abstract class SettingsState with _$SettingsState implements AppState {
+  factory SettingsState({BaseState base, AppState pstate, String address}) =
+      _SettingsState;
+}
+
+class ImportSeedState implements AppState {
+  final BaseState base;
+
+  ImportSeedState([this.base]);
+}

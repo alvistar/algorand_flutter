@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:algorand_flutter/ui/import_seed.dart';
+import 'package:algorand_flutter/ui/settings.dart';
 import 'package:algorand_flutter/ui/show_seed.dart';
 import 'package:flutter/material.dart';
 
@@ -9,9 +10,12 @@ import 'package:logging/logging.dart';
 
 import 'blocs/app_bloc.dart';
 import 'blocs/app_state.dart';
+import 'configuration.dart';
 import 'ui/home.dart';
 
 final Logger logger = Logger('AlgoWallet');
+
+Configuration configuration = Configuration();
 
 class SimpleBlocDelegate extends BlocDelegate {
   @override
@@ -35,13 +39,18 @@ class SimpleBlocDelegate extends BlocDelegate {
   }
 }
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((LogRecord rec) {
     print('${rec.loggerName} ${rec.level.name}: ${rec.time}: ${rec.message}');
   });
 
   BlocSupervisor.delegate = SimpleBlocDelegate();
+
+  await configuration.init();
+
   runApp(App());
 }
 
@@ -53,7 +62,7 @@ class App extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: BlocProvider(create: (_) => AppBloc(), child: AppPage()),
+      home: BlocProvider(create: (_) => AppBloc(configuration: configuration), child: AppPage()),
     );
   }
 }
@@ -72,6 +81,9 @@ class AppPage extends StatelessWidget {
           if (state is ImportSeedState) {
             return ImportSeed();
           };
+          if (state is SettingsState) {
+            return Settings();
+          }
           throw UnimplementedError();
     });
   }

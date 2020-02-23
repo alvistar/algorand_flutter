@@ -51,7 +51,15 @@ class HomePage extends StatelessWidget {
     }
 
     return Scaffold(
-        appBar: AppBar(title: Text('Algorand')),
+        appBar: AppBar(
+            title: Text('Algorand'),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.settings),
+                onPressed: () { appBloc.add(ShowSettings());},
+              )
+            ],
+        ),
         body: BlocListener<AppBloc, AppState>(
           condition: (previous, current) {
             // Conditions to avoid opening two SendSheet
@@ -87,17 +95,21 @@ class HomePage extends StatelessWidget {
           child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Text((appBloc.state as HomeState).balance.toString()),
-                    assetDropdown(
-                        current: (appBloc.state as HomeState).currentAsset,
-                        assets: (appBloc.state as HomeState).assets,
-                        onChanged: (value) {
-                          appBloc.add(ChangeAsset(value));
-                        })
-                  ]),
+              child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                      Text((appBloc.state as HomeState).balance.toString()),
+                      assetDropdown(
+                          current: (appBloc.state as HomeState).currentAsset,
+                          assets: (appBloc.state as HomeState).assets,
+                          onChanged: (value) {
+                            appBloc.add(ChangeAsset(value));
+                          })
+                    ]),
+                  )),
             ),
             Expanded(
                 child:

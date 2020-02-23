@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:algorand_flutter/ui/new_seed.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -60,6 +61,14 @@ class AppPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AppBloc, AppState>(
-        builder: (context, state) => HomePage());
+        builder: (context, state) {
+          if (state is HomeState) {
+            return HomePage();
+          }
+          if (state is NewSeedState) {
+            return NewSeed();
+          }
+          throw UnimplementedError();
+    });
   }
 }

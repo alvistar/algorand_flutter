@@ -27,7 +27,6 @@ mixin _$HomeState {
   Result when<Result extends Object>(
     Result $default(
         int balance,
-        Account accountInfo,
         String unit,
         @Default(const <String>[]) List<String> assets,
         @Default(const []) List<dynamic> transactions,
@@ -56,7 +55,6 @@ mixin _$HomeState {
   Result maybeWhen<Result extends Object>(
     Result $default(
         int balance,
-        Account accountInfo,
         String unit,
         @Default(const <String>[]) List<String> assets,
         @Default(const []) List<dynamic> transactions,
@@ -99,7 +97,6 @@ mixin _$HomeState {
 class _$HomeInitialState implements HomeInitialState {
   _$HomeInitialState(
       {this.balance,
-      this.accountInfo,
       this.unit,
       @Default(const <String>[]) this.assets = const <String>[],
       @Default(const []) this.transactions = const [],
@@ -107,8 +104,6 @@ class _$HomeInitialState implements HomeInitialState {
 
   @override
   final int balance;
-  @override
-  final Account accountInfo;
   @override
   final String unit;
   @JsonKey(defaultValue: const <String>[])
@@ -124,7 +119,7 @@ class _$HomeInitialState implements HomeInitialState {
 
   @override
   String toString() {
-    return 'HomeState(balance: $balance, accountInfo: $accountInfo, unit: $unit, assets: $assets, transactions: $transactions, currentAsset: $currentAsset)';
+    return 'HomeState(balance: $balance, unit: $unit, assets: $assets, transactions: $transactions, currentAsset: $currentAsset)';
   }
 
   @override
@@ -134,9 +129,6 @@ class _$HomeInitialState implements HomeInitialState {
             (identical(other.balance, balance) ||
                 const DeepCollectionEquality()
                     .equals(other.balance, balance)) &&
-            (identical(other.accountInfo, accountInfo) ||
-                const DeepCollectionEquality()
-                    .equals(other.accountInfo, accountInfo)) &&
             (identical(other.unit, unit) ||
                 const DeepCollectionEquality().equals(other.unit, unit)) &&
             (identical(other.assets, assets) ||
@@ -153,7 +145,6 @@ class _$HomeInitialState implements HomeInitialState {
   int get hashCode =>
       runtimeType.hashCode ^
       const DeepCollectionEquality().hash(balance) ^
-      const DeepCollectionEquality().hash(accountInfo) ^
       const DeepCollectionEquality().hash(unit) ^
       const DeepCollectionEquality().hash(assets) ^
       const DeepCollectionEquality().hash(transactions) ^
@@ -162,7 +153,6 @@ class _$HomeInitialState implements HomeInitialState {
   @override
   _$HomeInitialState copyWith({
     Object balance = freezed,
-    Object accountInfo = freezed,
     Object unit = freezed,
     Object assets = freezed,
     Object transactions = freezed,
@@ -170,8 +160,6 @@ class _$HomeInitialState implements HomeInitialState {
   }) {
     return _$HomeInitialState(
       balance: balance == freezed ? this.balance : balance as int,
-      accountInfo:
-          accountInfo == freezed ? this.accountInfo : accountInfo as Account,
       unit: unit == freezed ? this.unit : unit as String,
       assets: assets == freezed ? this.assets : assets as List<String>,
       transactions: transactions == freezed
@@ -187,7 +175,6 @@ class _$HomeInitialState implements HomeInitialState {
   Result when<Result extends Object>(
     Result $default(
         int balance,
-        Account accountInfo,
         String unit,
         @Default(const <String>[]) List<String> assets,
         @Default(const []) List<dynamic> transactions,
@@ -214,8 +201,7 @@ class _$HomeInitialState implements HomeInitialState {
     assert($default != null);
     assert(SendSheetState != null);
     assert(MantaSheetState != null);
-    return $default(
-        balance, accountInfo, unit, assets, transactions, currentAsset);
+    return $default(balance, unit, assets, transactions, currentAsset);
   }
 
   @override
@@ -223,7 +209,6 @@ class _$HomeInitialState implements HomeInitialState {
   Result maybeWhen<Result extends Object>(
     Result $default(
         int balance,
-        Account accountInfo,
         String unit,
         @Default(const <String>[]) List<String> assets,
         @Default(const []) List<dynamic> transactions,
@@ -248,8 +233,7 @@ class _$HomeInitialState implements HomeInitialState {
   }) {
     assert(orElse != null);
     if ($default != null) {
-      return $default(
-          balance, accountInfo, unit, assets, transactions, currentAsset);
+      return $default(balance, unit, assets, transactions, currentAsset);
     }
     return orElse();
   }
@@ -286,7 +270,6 @@ class _$HomeInitialState implements HomeInitialState {
 abstract class HomeInitialState implements HomeState {
   factory HomeInitialState(
       {int balance,
-      Account accountInfo,
       String unit,
       @Default(const <String>[]) List<String> assets,
       @Default(const []) List<dynamic> transactions,
@@ -294,7 +277,6 @@ abstract class HomeInitialState implements HomeState {
 
   @override
   int get balance;
-  Account get accountInfo;
   @override
   String get unit;
   @override
@@ -309,7 +291,6 @@ abstract class HomeInitialState implements HomeState {
   @override
   HomeInitialState copyWith(
       {int balance,
-      Account accountInfo,
       String unit,
       @Default(const <String>[]) List<String> assets,
       @Default(const []) List<dynamic> transactions,
@@ -412,7 +393,6 @@ class _$HomeSendSheetState implements HomeSendSheetState {
   Result when<Result extends Object>(
     Result $default(
         int balance,
-        Account accountInfo,
         String unit,
         @Default(const <String>[]) List<String> assets,
         @Default(const []) List<dynamic> transactions,
@@ -448,7 +428,6 @@ class _$HomeSendSheetState implements HomeSendSheetState {
   Result maybeWhen<Result extends Object>(
     Result $default(
         int balance,
-        Account accountInfo,
         String unit,
         @Default(const <String>[]) List<String> assets,
         @Default(const []) List<dynamic> transactions,
@@ -639,7 +618,6 @@ class _$HomeMantaSheetState implements HomeMantaSheetState {
   Result when<Result extends Object>(
     Result $default(
         int balance,
-        Account accountInfo,
         String unit,
         @Default(const <String>[]) List<String> assets,
         @Default(const []) List<dynamic> transactions,
@@ -675,7 +653,6 @@ class _$HomeMantaSheetState implements HomeMantaSheetState {
   Result maybeWhen<Result extends Object>(
     Result $default(
         int balance,
-        Account accountInfo,
         String unit,
         @Default(const <String>[]) List<String> assets,
         @Default(const []) List<dynamic> transactions,

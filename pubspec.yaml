@@ -32,10 +32,6 @@ dependencies:
   algo_explorer_api:
     path: ../algo-explorer-api
 
-
-  openapi:
-    path: ../algorand-dio
-
   dart_algorand:
     path: ../dart_algorand
 

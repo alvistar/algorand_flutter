@@ -17,11 +17,10 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppBloc appBloc = BlocProvider.of<AppBloc>(context);
 
-    showSendSheet({BuildContext context, int amount, String address}) async {
-      print (sendKey.currentWidget);
+    showSendSheet({int amount, String address}) async {
       if (sendKey.currentWidget != null) {
         return;
-      };
+      }
 
       final result = await showModalBottomSheet(
           context: context,
@@ -37,10 +36,7 @@ class HomePage extends StatelessWidget {
       appBloc.add(SendSheetDismissed());
     }
 
-    showMantaSheet(
-        {BuildContext context,
-        Merchant merchant,
-        Destination destination}) async {
+    showMantaSheet({Merchant merchant, Destination destination}) async {
       final result = await showModalBottomSheet(
           context: context,
           builder: (context) => BlocProvider.value(
@@ -80,36 +76,32 @@ class HomePage extends StatelessWidget {
 
             if (state is HomeSendSheetState) {
               showSendSheet(
-                  context: context,
-                  amount: state.destAmount,
-                  address: state.destAddress);
+                  amount: state.destAmount, address: state.destAddress);
             }
 
-            if (state is  HomeMantaSheetState) {
+            if (state is HomeMantaSheetState) {
               showMantaSheet(
-                  context: context,
-                  merchant: state.merchant,
-                  destination: state.destination);
+                  merchant: state.merchant, destination: state.destination);
             }
           },
           child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Text((appBloc.state as HomeState).balance.toString()),
-                  assetDropdown(
-                      current: (appBloc.state as HomeState).currentAsset,
-                      assets: (appBloc.state as HomeState).assets,
-                      onChanged: (value) {
-                        appBloc.add(ChangeAsset(value));
-                      })
-                ]),
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Text((appBloc.state as HomeState).balance.toString()),
+                    assetDropdown(
+                        current: (appBloc.state as HomeState).currentAsset,
+                        assets: (appBloc.state as HomeState).assets,
+                        onChanged: (value) {
+                          appBloc.add(ChangeAsset(value));
+                        })
+                  ]),
             ),
             Expanded(
-                child: transactionList(
-                    (appBloc.state as HomeState).transactions)),
+                child:
+                    transactionList((appBloc.state as HomeState).transactions)),
             RaisedButton(
               child: const Text('SEND'),
               onPressed: () {
@@ -121,24 +113,22 @@ class HomePage extends StatelessWidget {
   }
 }
 
-assetDropdown({
-  String current,
-  List<String> assets,
-  void Function(String value) onChanged}) {
-
+assetDropdown(
+    {String current,
+    List<String> assets,
+    void Function(String value) onChanged}) {
   return DropdownButton<String>(
       hint: Text('Select currency'),
       value: current,
       icon: Icon(Icons.arrow_downward),
       iconSize: 24,
       elevation: 16,
-
-      items: assets.map((e) =>
-          DropdownMenuItem (
-            value: e,
-            child: Text(e),
-
-      )).toList(),
+      items: assets
+          .map((e) => DropdownMenuItem(
+                value: e,
+                child: Text(e),
+              ))
+          .toList(),
       onChanged: onChanged);
 }
 

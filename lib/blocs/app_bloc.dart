@@ -3,17 +3,11 @@ import 'dart:convert';
 
 import 'package:algo_explorer_api/algo_explorer_api.dart';
 import 'package:bloc/bloc.dart';
-import 'package:built_collection/built_collection.dart';
+import 'package:dart_algorand/algod.dart' as algod;
 import 'package:dart_algorand/dart_algorand.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:manta_dart/manta_wallet.dart';
-import 'package:openapi/api.dart';
-import 'package:openapi/api/default_api.dart';
 import 'package:logging/logging.dart';
-import 'package:algo_explorer_api/algo_explorer_api.dart';
-import 'package:openapi/model/account.dart';
-import 'package:openapi/model/asset_params.dart';
 
 import 'app_event.dart';
 import 'app_state.dart';
@@ -23,23 +17,24 @@ final Logger logger = Logger('AlgoWallet');
 
 class AppBloc extends Bloc<AppEvent, AppState> {
   AccountApi accountApi;
-  DefaultApi client;
+  algod.AlgodApi client;
   Timer accountTimer;
   MantaWallet mantaWallet;
-  Account accountInfo;
+  algod.Account accountInfo;
+
 
   @override
-  // TODO: implement initialState
   AppState get initialState {
     client = init_client();
     accountApi = ExplorerApi().getAccountApi();
     getAccountInformation();
-    startTimer();
+     startTimer();
 
-    return HomeState(transactions: [], currentAsset: 'algo');
+     return HomeState(transactions: [], currentAsset: 'algo');
+    // return NewSeedState();
   }
 
-  static int getBalanceForAssetIndex({Account account, int asset}) {
+  static int getBalanceForAssetIndex({algod.Account account, int asset}) {
     final m = account.assets.asMap;
     return (m[asset.toString()]['amount']);
   }
@@ -69,7 +64,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 
 
-  static List<String> getAssets(Account account) {
+  static List<String> getAssets(algod.Account account) {
     final assets = <String>[];
 
     account.thisassettotal.forEach((key, value) {
@@ -282,7 +277,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   }
 }
 
-DefaultApi init_client() {
+algod.AlgodApi init_client() {
   final options = BaseOptions(
     baseUrl: 'http://algorand-testnet.beappia.com',
     connectTimeout: 5000,
@@ -307,5 +302,5 @@ DefaultApi init_client() {
     return e;
   }));
 
-  return Openapi(dio: dio).getDefaultApi();
+  return algod.Openapi(dio: dio).getAlgodApi();
 }

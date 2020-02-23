@@ -1,14 +1,12 @@
+import 'package:dart_algorand/algod.dart' as algod;
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
-import 'package:manta_dart/messages.dart';
-import 'package:openapi/model/account.dart';
 
 abstract class AppEvent extends Equatable {
   const AppEvent();
 }
 
 class AccountInfoUpdate extends AppEvent {
-  final Account account;
+  final algod.Account account;
 
   AccountInfoUpdate(this.account);
 

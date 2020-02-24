@@ -6,12 +6,12 @@ import 'package:algorand_flutter/blocs/utils.dart';
 import 'package:bloc/bloc.dart';
 import 'package:dart_algorand/algod.dart' as algod;
 import 'package:dart_algorand/dart_algorand.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:manta_dart/manta_wallet.dart';
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 
 import '../configuration.dart';
+import 'AppHomeMantaSheetMapper.dart';
 import 'AppHomeSendSheetMapper.dart';
 import 'app_event.dart';
 import 'app_state.dart';
@@ -21,7 +21,8 @@ import 'AppHomeInitialMapper.dart';
 
 final Logger logger = Logger('AlgoWallet');
 
-class AppBloc extends Bloc<AppEvent, AppState> {
+class AppBloc extends Bloc<AppEvent, AppState>
+    with AppHomeSendSheetMapper, AppHomeInitialMapper, AppHomeMantaSheetMapper {
   AccountApi accountApi;
   algod.AlgodApi client;
   Timer accountTimer;
@@ -52,19 +53,39 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     return AppHome(base: BaseState(), transactions: [], currentAsset: 'algo');
   }
 
-  static int getBalanceForAssetIndex({algod.Account account, int asset}) {
-    final m = account.assets.asMap;
-    return (m[asset.toString()]['amount']);
+  @override
+  Stream<AppState> mapEventToState(AppEvent event) async* {
+    if (state is AppHomeInitial) {
+      yield* mapAppHomeInitialToState(event, state);
+    } else if (state is AppHomeSendSheet) {
+      yield* mapAppHomeSendSheetToState(event, state);
+    } else if (state is AppHomeMantaSheet) {
+      yield* mapAppHomeMantaSheetToState(event, state);
+    } else {
+      throw UnimplementedError('Appbloc was unable to map $event');
+    }
   }
 
-  static List<String> getAssets(algod.Account account) {
-    final assets = <String>[];
-
-    account.thisassettotal.forEach((key, value) {
-      assets.add(value.unitname);
-    });
-
-    return assets;
+  @override
+  Stream<AppState> mapGlobalEventToState(AppEvent event) async* {
+    if (event is AppSend) {
+      yield* _mapSendToState(event);
+    } else if (event is AppSeedImported) {
+      account = Account(
+          private_key: to_private_key(event.seed),
+          address: to_public_key(event.seed));
+      yield AppSeed(address: account.address, privateKey: account.private_key);
+    } else if (event is AppSettingsShow) {
+      yield AppSettings(address: account.address, pstate: state);
+    } else if (event is AppBack) {
+      yield (state as Backable).pstate;
+    } else if (event is AppImportSeedShow) {
+      yield AppImportSeed(pstate: state);
+    } else if (event is AppForward) {
+      if (state is AppSeed) {
+        yield initHome();
+      }
+    }
   }
 
   generateNewAccount() {
@@ -192,41 +213,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     super.onTransition(transition);
   }
 
-  @override
-  Stream<AppState> mapEventToState(AppEvent event) async* {
-    if (state is AppHomeInitial) {
-      yield* AppHomeInitialMapper(event, state).map();
-    } else if (state is AppHomeSendSheet) {
-      yield* AppHomeSendSheetMapper(event, state).map();
-    }
-
-    // Handle global app events
-
-    if (event is AppMantaSheetDismissed) {
-      yield (state as AppHome).toSendSheet();
-    } else if (event is AppSend) {
-      yield* _mapSendToState(event);
-    }
-    else if (event is AppSeedImported) {
-      account = Account(
-          private_key: to_private_key(event.seed),
-          address: to_public_key(event.seed));
-      yield AppSeed(
-          address: account.address, privateKey: account.private_key);
-    } else if (event is AppSettingsShow) {
-      yield AppSettings(address: account.address, pstate: state);
-    } else if (event is AppBack) {
-      yield (state as Backable).pstate;
-    } else if (event is AppImportSeedShow) {
-      yield AppImportSeed(pstate: state);
-    } else if (event is AppForward) {
-      if (state is AppSeed) {
-        yield initHome();
-      }
-    }
-  }
-
-
   Stream<AppState> _mapSendToState(AppSend event) async* {
     final note = mantaWallet == null ? null : mantaWallet.session_id;
     final currentAsset = (state as AppHome).currentAsset;
@@ -246,8 +232,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     yield (state as AppHome).toInitialState();
   }
 }
-
-
 
 algod.AlgodApi init_client() {
   final options = BaseOptions(

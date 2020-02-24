@@ -6,21 +6,24 @@ import 'package:manta_dart/manta_wallet.dart';
 import 'app_event.dart';
 import 'mapper.dart';
 
-class AppHomeSendSheetMapper extends Mapper<AppHomeSendSheet, AppEvent> {
-  AppHomeSendSheetMapper(event, state) : super(event, state);
+class AppHomeSendSheetMapper with Mapper{
 
-  @override
-  Stream<AppState> map() async* {
+  Stream<AppState> mapAppHomeSendSheetToState(
+      AppEvent event, AppHomeSendSheet state) async* {
     if (event is AppSendSheetDismissed) {
       yield state.toInitialState();
     } else if (event is AppQRScan) {
-      yield* _mapScanQRtoState(event);
+      yield* _mapScanQRtoState(event, state);
+    } else if (event is AppSend) {
+      yield* mapGlobalEventToState(event);
+      // Let be handled by main mapEventToState
     } else {
       throw UnimplementedError('$event not handled in $state');
     }
   }
 
-  Stream<AppState> _mapScanQRtoState(AppQRScan event) async* {
+  Stream<AppState> _mapScanQRtoState(
+      AppQRScan event, AppHomeSendSheet state) async* {
     String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
         "#ff6666", "Cancel", true, ScanMode.QR);
 

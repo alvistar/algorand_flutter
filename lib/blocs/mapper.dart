@@ -1,11 +1,8 @@
+import 'app_event.dart';
 import 'app_state.dart';
 
-abstract class Mapper<S, E> {
-  final E event;
-  final S state;
-
-  Mapper(this.event, this.state);
-
-  Stream<AppState> map();
-
+mixin Mapper {
+  Stream<AppState> mapGlobalEventToState(AppEvent event) {
+    throw UnimplementedError();
+  }
 }

@@ -70,18 +70,20 @@ class App extends StatelessWidget {
 class AppPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final appBloc = BlocProvider.of<AppBloc>(context);
+
     return BlocBuilder<AppBloc, AppState>(
         builder: (context, state) {
-          if (state is HomeState) {
+          if (state is AppHome) {
             return HomePage();
           }
-          if (state is ShowSeedState) {
+          if (state is AppSeed) {
             return ShowSeed();
           }
-          if (state is ImportSeedState) {
+          if (state is AppImportSeed) {
             return ImportSeed();
           };
-          if (state is SettingsState) {
+          if (state is AppSettings) {
             return Settings();
           }
           throw UnimplementedError();

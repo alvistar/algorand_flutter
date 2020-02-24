@@ -23,14 +23,14 @@ class ImportSeedUIState extends State<ImportSeed> {
       if (!_formKey.currentState.validate()) {
         return;
       }
-      appBloc.add(ImportedSeed(_privateKey.text));
+      appBloc.add(AppSeedImported(_privateKey.text));
     }
 
     return Scaffold(
         appBar: AppBar(title: Text('New seed'),
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: Colors.white,),
-            onPressed: () { appBloc.add(Back());},
+            onPressed: () { appBloc.add(AppBack());},
           ),),
         body: Padding(
           padding: const EdgeInsets.all(8.0),

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:algo_explorer_api/algo_explorer_api.dart';
+import 'package:algorand_flutter/blocs/utils.dart';
 import 'package:bloc/bloc.dart';
 import 'package:dart_algorand/algod.dart' as algod;
 import 'package:dart_algorand/dart_algorand.dart';
@@ -11,9 +12,12 @@ import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 
 import '../configuration.dart';
+import 'AppHomeSendSheetMapper.dart';
 import 'app_event.dart';
 import 'app_state.dart';
 import 'package:dio/dio.dart';
+
+import 'AppHomeInitialMapper.dart';
 
 final Logger logger = Logger('AlgoWallet');
 
@@ -22,7 +26,6 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   algod.AlgodApi client;
   Timer accountTimer;
   MantaWallet mantaWallet;
-  algod.Account accountInfo;
   Account account;
   Configuration configuration;
 
@@ -46,7 +49,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     getAccountInformation();
     startTimer();
 
-    return HomeState(transactions: [], currentAsset: 'algo');
+    return AppHome(base: BaseState(), transactions: [], currentAsset: 'algo');
   }
 
   static int getBalanceForAssetIndex({algod.Account account, int asset}) {
@@ -68,40 +71,17 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     account = generate_account();
   }
 
-  int getAssetIndex(String asset) {
-    final key = accountInfo.thisassettotal.keys
-        .firstWhere((k) => accountInfo.thisassettotal[k].unitname == asset);
-    return int.parse(key);
-  }
-
-  int getBalance([String asset]) {
-    final s = state as HomeState;
-
-    asset ??= s.currentAsset;
-
-    if (accountInfo == null) {
-      return 0;
-    }
-
-    if (asset == 'algo') {
-      return accountInfo.amount;
-    }
-
-    return getBalanceForAssetIndex(
-        account: accountInfo, asset: getAssetIndex(asset));
-  }
-
   getAccountInformation() async {
     logger.fine('Updating account');
     final address =
         'BICEALPAAJT3VMBTPNE6U44HAJGZKMUZQMYWVEOCGMNDVKQOTRU7OUXAZU';
     client
         .accountInformation(address)
-        .then((result) => this.add(AccountInfoUpdate(result.data)));
+        .then((result) => this.add(AppAccountInfoUpdate(result.data)));
 
     try {
       final latest = await accountApi.accountsGetLatestByIndex(address, 5);
-      this.add(TransactionsUpdate(latest.data));
+      this.add(AppTransactionsUpdate(latest.data));
     } on DioError catch (e) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx and is also not 304.
@@ -198,14 +178,14 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   @override
   void onTransition(Transition<AppEvent, AppState> transition) {
     // On enter InitialAppState
-    if (transition.nextState is HomeInitialState &&
-        !(transition.currentState is HomeInitialState)) {
+    if (transition.nextState is AppHomeInitial &&
+        !(transition.currentState is AppHomeInitial)) {
       startTimer();
     }
 
     // On exit InitialAppState
-    if (transition.currentState is HomeInitialState &&
-        !(transition.nextState is HomeInitialState)) {
+    if (transition.currentState is AppHomeInitial &&
+        !(transition.nextState is AppHomeInitial)) {
       stopTimer();
     }
 
@@ -214,45 +194,42 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   @override
   Stream<AppState> mapEventToState(AppEvent event) async* {
-    if (event is AccountInfoUpdate) {
-      yield* _mapAccountInfoUpdateToState(event);
-    } else if (event is TransactionsUpdate) {
-      yield (state as HomeState).copyWith(transactions: event.transactions);
-    } else if (event is SendSheetShow) {
-      yield (state as HomeState).toSendSheet();
-    } else if (event is SendSheetDismissed) {
-      yield (state as HomeState).toInitialState();
-    } else if (event is MantaSheetDismissed) {
-      yield (state as HomeState).toSendSheet();
-    } else if (event is Send) {
+    if (state is AppHomeInitial) {
+      yield* AppHomeInitialMapper(event, state).map();
+    } else if (state is AppHomeSendSheet) {
+      yield* AppHomeSendSheetMapper(event, state).map();
+    }
+
+    // Handle global app events
+
+    if (event is AppMantaSheetDismissed) {
+      yield (state as AppHome).toSendSheet();
+    } else if (event is AppSend) {
       yield* _mapSendToState(event);
-    } else if (event is ScanQR) {
-      yield* _mapScanQRtoState(event);
-    } else if (event is ChangeAsset) {
-      yield (state as HomeState).copyWith(
-          balance: getBalance(event.asset), currentAsset: event.asset);
-    } else if (event is ImportedSeed) {
+    }
+    else if (event is AppSeedImported) {
       account = Account(
           private_key: to_private_key(event.seed),
           address: to_public_key(event.seed));
-      yield ShowSeedState(
+      yield AppSeed(
           address: account.address, privateKey: account.private_key);
-    } else if (event is ShowSettings) {
-      yield SettingsState(address: account.address, pstate: state);
-    } else if (event is Back) {
+    } else if (event is AppSettingsShow) {
+      yield AppSettings(address: account.address, pstate: state);
+    } else if (event is AppBack) {
       yield (state as Backable).pstate;
-    } else if (event is ShowImportSeed) {
-      yield ImportSeedState(pstate: state);
-    } else if (event is Forward) {
-      if (state is ShowSeedState) {
+    } else if (event is AppImportSeedShow) {
+      yield AppImportSeed(pstate: state);
+    } else if (event is AppForward) {
+      if (state is AppSeed) {
         yield initHome();
       }
     }
   }
 
-  Stream<AppState> _mapSendToState(Send event) async* {
+
+  Stream<AppState> _mapSendToState(AppSend event) async* {
     final note = mantaWallet == null ? null : mantaWallet.session_id;
-    final currentAsset = (state as HomeState).currentAsset;
+    final currentAsset = (state as AppHome).currentAsset;
 
     if (currentAsset == 'algo') {
       sendTransaction(
@@ -262,47 +239,15 @@ class AppBloc extends Bloc<AppEvent, AppState> {
           destination: event.destination,
           amount: event.amount,
           note: note,
-          index: getAssetIndex(currentAsset));
+          index: getAssetIndex(
+              account: state.base.accountInfo, asset: currentAsset));
     }
 
-    yield (state as HomeState).toInitialState();
-  }
-
-  Stream<AppState> _mapAccountInfoUpdateToState(
-      AccountInfoUpdate event) async* {
-    final assets = <String>['algo'];
-    assets.addAll(getAssets(event.account));
-    accountInfo = event.account;
-
-    yield (state as HomeState).copyWith(balance: getBalance(), assets: assets);
-  }
-
-  Stream<AppState> _mapScanQRtoState(ScanQR event) async* {
-    String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-        "#ff6666", "Cancel", true, ScanMode.QR);
-
-    // Test Manta Url
-    final mantaParsed = MantaWallet.parseUrl(barcodeScanRes);
-
-    if (mantaParsed != null) {
-      print("Manta Address!");
-      mantaWallet = MantaWallet(barcodeScanRes);
-      final envelope =
-          await mantaWallet.getPaymentRequest(cryptoCurrency: "ALGO-TESTNET");
-      final pr = envelope.unpack();
-
-      yield (state as HomeState)
-          .toMantaSheet(merchant: pr.merchant, destination: pr.destinations[0]);
-    }
-
-    final parsed = parseUrl(barcodeScanRes);
-
-    if (parsed != null) {
-      yield (state as HomeState)
-          .toSendSheet(destAddress: parsed.address, destAmount: parsed.amount);
-    }
+    yield (state as AppHome).toInitialState();
   }
 }
+
+
 
 algod.AlgodApi init_client() {
   final options = BaseOptions(

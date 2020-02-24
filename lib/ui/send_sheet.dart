@@ -36,7 +36,7 @@ class SendSheetUIState extends State<SendSheet> {
     final AppBloc appBloc = BlocProvider.of<AppBloc>(context);
     return BlocListener<AppBloc, AppState>(
         listener: (context, state) {
-          if (state is HomeSendSheetState) {
+          if (state is AppHomeSendSheet) {
             _amount.text = state.destAmount.toString();
             _destination.text = state.destAddress;
           }
@@ -74,7 +74,7 @@ class SendSheetUIState extends State<SendSheet> {
                   }
 
                   if (int.parse(value) >
-                      (appBloc.state as HomeSendSheetState).balance) {
+                      (appBloc.state as AppHomeSendSheet).balance) {
                     return 'Not enough balance';
                   }
 
@@ -84,7 +84,7 @@ class SendSheetUIState extends State<SendSheet> {
               RaisedButton(
                 child: Text('SCAN'),
                 onPressed: () async {
-                  appBloc.add(ScanQR());
+                  appBloc.add(AppQRScan());
                 },
               ),
               RaisedButton(
@@ -94,7 +94,7 @@ class SendSheetUIState extends State<SendSheet> {
                     return;
                   }
 
-                  appBloc.add(Send(
+                  appBloc.add(AppSend(
                       destination: _destination.text,
                       amount: int.parse(_amount.text)));
                 },

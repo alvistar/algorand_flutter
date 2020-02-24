@@ -1,11 +1,13 @@
 import 'package:manta_dart/messages.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:dart_algorand/algod.dart';
 
 part 'app_state.freezed.dart';
 
+
 @freezed
 abstract class BaseState with _$BaseState {
-  factory BaseState() = _BaseState;
+  factory BaseState({Account accountInfo}) = _BaseState;
 }
 
 abstract class AppState {
@@ -13,16 +15,16 @@ abstract class AppState {
 }
 
 @freezed
-abstract class HomeState with _$HomeState implements AppState {
-  factory HomeState(
+abstract class AppHome with _$AppHome implements AppState {
+  factory AppHome(
       {BaseState base,
       int balance,
       String unit,
       @Default(const <String>[]) List<String> assets,
       @Default(const []) List transactions,
-      String currentAsset}) = HomeInitialState;
+      String currentAsset}) = AppHomeInitial;
 
-  factory HomeState.SendSheetState(
+  factory AppHome.SendSheetState(
       {BaseState base,
       int balance,
       String unit,
@@ -30,9 +32,9 @@ abstract class HomeState with _$HomeState implements AppState {
       List transactions,
       String currentAsset,
       int destAmount,
-      String destAddress}) = HomeSendSheetState;
+      String destAddress}) = AppHomeSendSheet;
 
-  factory HomeState.MantaSheetState(
+  factory AppHome.MantaSheetState(
       {BaseState base,
       int balance,
       String unit,
@@ -40,12 +42,12 @@ abstract class HomeState with _$HomeState implements AppState {
       List transactions,
       String currentAsset,
       Merchant merchant,
-      Destination destination}) = HomeMantaSheetState;
+      Destination destination}) = AppHomeMantaSheet;
 }
 
-extension Utils on HomeState {
-  HomeSendSheetState toSendSheet({int destAmount, String destAddress}) {
-    return HomeState.SendSheetState(
+extension Utils on AppHome {
+  AppHomeSendSheet toSendSheet({int destAmount, String destAddress}) {
+    return AppHome.SendSheetState(
         base: base,
         balance: balance,
         unit: unit,
@@ -56,9 +58,8 @@ extension Utils on HomeState {
         destAddress: destAddress);
   }
 
-  HomeSendSheetState toMantaSheet(
-      {Merchant merchant, Destination destination}) {
-    return HomeState.MantaSheetState(
+  AppHomeSendSheet toMantaSheet({Merchant merchant, Destination destination}) {
+    return AppHome.MantaSheetState(
         base: base,
         balance: balance,
         unit: unit,
@@ -69,8 +70,8 @@ extension Utils on HomeState {
         merchant: merchant);
   }
 
-  HomeInitialState toInitialState() {
-    return HomeState(
+  AppHomeInitial toInitialState() {
+    return AppHome(
       base: base,
       balance: balance,
       unit: unit,
@@ -86,28 +87,24 @@ abstract class Backable {
 }
 
 @freezed
-abstract class ShowSeedState
-    with _$ShowSeedState
-    implements AppState, Backable {
-  factory ShowSeedState(
+abstract class AppSeed with _$AppSeed implements AppState, Backable {
+  factory AppSeed(
       {BaseState base,
       AppState pstate,
       String address,
-      String privateKey}) = _ShowSeedState;
+      String privateKey}) = _AppSeed;
 }
 
 @freezed
-abstract class SettingsState
-    with _$SettingsState
-    implements AppState, Backable {
-  factory SettingsState({BaseState base, AppState pstate, String address}) =
-      _SettingsState;
+abstract class AppSettings with _$AppSettings implements AppState, Backable {
+  factory AppSettings({BaseState base, AppState pstate, String address}) =
+      _AppSettings;
 }
 
 @freezed
-abstract class ImportSeedState
-    with _$ImportSeedState
+abstract class AppImportSeed
+    with _$AppImportSeed
     implements AppState, Backable {
-  factory ImportSeedState({BaseState base, AppState pstate, String address}) =
-      _ImportSeedState;
+  factory AppImportSeed({BaseState base, AppState pstate, String address}) =
+      _AppImportSeed;
 }

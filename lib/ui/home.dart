@@ -33,7 +33,7 @@ class HomePage extends StatelessWidget {
               )));
 
       // This is not the best as breaking logic of events to change state
-      appBloc.add(SendSheetDismissed());
+      appBloc.add(AppSendSheetDismissed());
     }
 
     showMantaSheet({Merchant merchant, Destination destination}) async {
@@ -47,7 +47,7 @@ class HomePage extends StatelessWidget {
               )));
 
       // This is not the best as breaking logic of
-      appBloc.add(MantaSheetDismissed());
+      appBloc.add(AppMantaSheetDismissed());
     }
 
     return Scaffold(
@@ -56,7 +56,7 @@ class HomePage extends StatelessWidget {
             actions: <Widget>[
               IconButton(
                 icon: Icon(Icons.settings),
-                onPressed: () { appBloc.add(ShowSettings());},
+                onPressed: () { appBloc.add(AppSettingsShow());},
               )
             ],
         ),
@@ -77,17 +77,17 @@ class HomePage extends StatelessWidget {
             return true;
           },
           listener: (context, state) {
-            if (state is HomeInitialState) {
+            if (state is AppHomeInitial) {
               // Ensure we are on InitialAppState
               Navigator.popUntil(context, (route) => route.isFirst);
             }
 
-            if (state is HomeSendSheetState) {
+            if (state is AppHomeSendSheet) {
               showSendSheet(
                   amount: state.destAmount, address: state.destAddress);
             }
 
-            if (state is HomeMantaSheetState) {
+            if (state is AppHomeMantaSheet) {
               showMantaSheet(
                   merchant: state.merchant, destination: state.destination);
             }
@@ -101,23 +101,23 @@ class HomePage extends StatelessWidget {
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
-                      Text((appBloc.state as HomeState).balance.toString()),
+                      Text((appBloc.state as AppHome).balance.toString()),
                       assetDropdown(
-                          current: (appBloc.state as HomeState).currentAsset,
-                          assets: (appBloc.state as HomeState).assets,
+                          current: (appBloc.state as AppHome).currentAsset,
+                          assets: (appBloc.state as AppHome).assets,
                           onChanged: (value) {
-                            appBloc.add(ChangeAsset(value));
+                            appBloc.add(AppAssetChanged(value));
                           })
                     ]),
                   )),
             ),
             Expanded(
                 child:
-                    transactionList((appBloc.state as HomeState).transactions)),
+                    transactionList((appBloc.state as AppHome).transactions)),
             RaisedButton(
               child: const Text('SEND'),
               onPressed: () {
-                appBloc.add(SendSheetShow());
+                appBloc.add(AppSendSheetShow());
               },
             )
           ]),

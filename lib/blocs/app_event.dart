@@ -1,50 +1,51 @@
-import 'package:algorand_flutter/main.dart';
 import 'package:dart_algorand/algod.dart' as algod;
 import 'package:equatable/equatable.dart';
 
 abstract class AppEvent extends Equatable {
   const AppEvent();
+//  @override
+//  bool get stringify => true;
 }
 
-class AccountInfoUpdate extends AppEvent {
+class AppAccountInfoUpdate extends AppEvent {
   final algod.Account account;
 
-  AccountInfoUpdate(this.account);
+  AppAccountInfoUpdate(this.account);
 
   @override
   List<Object> get props => [account];
 }
 
-class TransactionsUpdate extends AppEvent {
+class AppTransactionsUpdate extends AppEvent {
   final List transactions;
 
-  TransactionsUpdate(this.transactions);
+  AppTransactionsUpdate(this.transactions);
 
   @override
   List<Object> get props => [transactions];
 }
 
-class SendSheetShow extends AppEvent {
+class AppSendSheetShow extends AppEvent {
   @override
   List<Object> get props => [];
 }
 
 
-class SendSheetDismissed extends AppEvent {
+class AppSendSheetDismissed extends AppEvent {
   @override
   List<Object> get props => [];
 }
 
-class MantaSheetDismissed extends AppEvent {
+class AppMantaSheetDismissed extends AppEvent {
   @override
   List<Object> get props => [];
 }
 
-class Send extends AppEvent {
+class AppSend extends AppEvent {
   final int amount;
   final String destination;
 
-  Send({this.amount, this.destination});
+  AppSend({this.amount, this.destination});
 
   @override
   List<Object> get props => [amount, destination];
@@ -55,55 +56,55 @@ class Send extends AppEvent {
   }
 }
 
-class ParseURL extends AppEvent {
+class AppParseURL extends AppEvent {
   final String url;
 
-  ParseURL(this.url);
+  AppParseURL(this.url);
 
   @override
   List<Object> get props => [url];
 }
 
-class ScanQR extends AppEvent {
+class AppQRScan extends AppEvent {
   @override
   List<Object> get props => [];
 }
 
-class ChangeAsset extends AppEvent {
+class AppAssetChanged extends AppEvent {
   final String asset;
 
-  ChangeAsset(this.asset);
+  AppAssetChanged(this.asset);
 
   @override
   List<Object> get props => [asset];
 
 }
 
-class ShowImportSeed extends AppEvent {
+class AppImportSeedShow extends AppEvent {
   @override
   List<Object> get props => [];
 }
 
-class ShowSettings extends AppEvent {
+class AppSettingsShow extends AppEvent {
   @override
   List<Object> get props => [];
 }
 
-class ImportedSeed extends AppEvent {
+class AppSeedImported extends AppEvent {
   final String seed;
 
-  ImportedSeed(this.seed);
+  AppSeedImported(this.seed);
 
   @override
   List<Object> get props => [seed];
 }
 
-class Back extends AppEvent {
+class AppBack extends AppEvent {
   @override
   List<Object> get props => [];
 }
 
-class Forward extends AppEvent {
+class AppForward extends AppEvent {
   @override
   List<Object> get props => [];
 }

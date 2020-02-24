@@ -50,7 +50,7 @@ class MantaSheet extends StatelessWidget {
                 onPressed: () {
                   final amt = (destination.amount * Decimal.fromInt(pow(10,6))).toInt();
                   print(amt);
-                  appBloc.add(Send(
+                  appBloc.add(AppSend(
                       destination: destination.destination_address,
                       amount: amt));
                 },

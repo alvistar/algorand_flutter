@@ -7,30 +7,58 @@ part of 'app_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
-mixin _$BaseState {}
+mixin _$BaseState {
+  Account get accountInfo;
+
+  BaseState copyWith({Account accountInfo});
+}
 
 class _$_BaseState implements _BaseState {
-  _$_BaseState();
+  _$_BaseState({this.accountInfo});
+
+  @override
+  final Account accountInfo;
 
   @override
   String toString() {
-    return 'BaseState()';
+    return 'BaseState(accountInfo: $accountInfo)';
   }
 
   @override
   bool operator ==(dynamic other) {
-    return identical(this, other) || (other is _BaseState);
+    return identical(this, other) ||
+        (other is _BaseState &&
+            (identical(other.accountInfo, accountInfo) ||
+                const DeepCollectionEquality()
+                    .equals(other.accountInfo, accountInfo)));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode =>
+      runtimeType.hashCode ^ const DeepCollectionEquality().hash(accountInfo);
+
+  @override
+  _$_BaseState copyWith({
+    Object accountInfo = freezed,
+  }) {
+    return _$_BaseState(
+      accountInfo:
+          accountInfo == freezed ? this.accountInfo : accountInfo as Account,
+    );
+  }
 }
 
 abstract class _BaseState implements BaseState {
-  factory _BaseState() = _$_BaseState;
+  factory _BaseState({Account accountInfo}) = _$_BaseState;
+
+  @override
+  Account get accountInfo;
+
+  @override
+  _BaseState copyWith({Account accountInfo});
 }
 
-mixin _$HomeState {
+mixin _$AppHome {
   BaseState get base;
   int get balance;
   String get unit;
@@ -40,7 +68,7 @@ mixin _$HomeState {
   List<dynamic> get transactions;
   String get currentAsset;
 
-  HomeState copyWith(
+  AppHome copyWith(
       {BaseState base,
       int balance,
       String unit,
@@ -111,22 +139,22 @@ mixin _$HomeState {
 
   @optionalTypeArgs
   Result map<Result extends Object>(
-    Result $default(HomeInitialState value), {
-    @required Result SendSheetState(HomeSendSheetState value),
-    @required Result MantaSheetState(HomeMantaSheetState value),
+    Result $default(AppHomeInitial value), {
+    @required Result SendSheetState(AppHomeSendSheet value),
+    @required Result MantaSheetState(AppHomeMantaSheet value),
   });
 
   @optionalTypeArgs
   Result maybeMap<Result extends Object>(
-    Result $default(HomeInitialState value), {
-    Result SendSheetState(HomeSendSheetState value),
-    Result MantaSheetState(HomeMantaSheetState value),
+    Result $default(AppHomeInitial value), {
+    Result SendSheetState(AppHomeSendSheet value),
+    Result MantaSheetState(AppHomeMantaSheet value),
     @required Result orElse(),
   });
 }
 
-class _$HomeInitialState implements HomeInitialState {
-  _$HomeInitialState(
+class _$AppHomeInitial implements AppHomeInitial {
+  _$AppHomeInitial(
       {this.base,
       this.balance,
       this.unit,
@@ -153,13 +181,13 @@ class _$HomeInitialState implements HomeInitialState {
 
   @override
   String toString() {
-    return 'HomeState(base: $base, balance: $balance, unit: $unit, assets: $assets, transactions: $transactions, currentAsset: $currentAsset)';
+    return 'AppHome(base: $base, balance: $balance, unit: $unit, assets: $assets, transactions: $transactions, currentAsset: $currentAsset)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is HomeInitialState &&
+        (other is AppHomeInitial &&
             (identical(other.base, base) ||
                 const DeepCollectionEquality().equals(other.base, base)) &&
             (identical(other.balance, balance) ||
@@ -188,7 +216,7 @@ class _$HomeInitialState implements HomeInitialState {
       const DeepCollectionEquality().hash(currentAsset);
 
   @override
-  _$HomeInitialState copyWith({
+  _$AppHomeInitial copyWith({
     Object base = freezed,
     Object balance = freezed,
     Object unit = freezed,
@@ -196,7 +224,7 @@ class _$HomeInitialState implements HomeInitialState {
     Object transactions = freezed,
     Object currentAsset = freezed,
   }) {
-    return _$HomeInitialState(
+    return _$AppHomeInitial(
       base: base == freezed ? this.base : base as BaseState,
       balance: balance == freezed ? this.balance : balance as int,
       unit: unit == freezed ? this.unit : unit as String,
@@ -286,9 +314,9 @@ class _$HomeInitialState implements HomeInitialState {
   @override
   @optionalTypeArgs
   Result map<Result extends Object>(
-    Result $default(HomeInitialState value), {
-    @required Result SendSheetState(HomeSendSheetState value),
-    @required Result MantaSheetState(HomeMantaSheetState value),
+    Result $default(AppHomeInitial value), {
+    @required Result SendSheetState(AppHomeSendSheet value),
+    @required Result MantaSheetState(AppHomeMantaSheet value),
   }) {
     assert($default != null);
     assert(SendSheetState != null);
@@ -299,9 +327,9 @@ class _$HomeInitialState implements HomeInitialState {
   @override
   @optionalTypeArgs
   Result maybeMap<Result extends Object>(
-    Result $default(HomeInitialState value), {
-    Result SendSheetState(HomeSendSheetState value),
-    Result MantaSheetState(HomeMantaSheetState value),
+    Result $default(AppHomeInitial value), {
+    Result SendSheetState(AppHomeSendSheet value),
+    Result MantaSheetState(AppHomeMantaSheet value),
     @required Result orElse(),
   }) {
     assert(orElse != null);
@@ -312,14 +340,14 @@ class _$HomeInitialState implements HomeInitialState {
   }
 }
 
-abstract class HomeInitialState implements HomeState {
-  factory HomeInitialState(
+abstract class AppHomeInitial implements AppHome {
+  factory AppHomeInitial(
       {BaseState base,
       int balance,
       String unit,
       @Default(const <String>[]) List<String> assets,
       @Default(const []) List<dynamic> transactions,
-      String currentAsset}) = _$HomeInitialState;
+      String currentAsset}) = _$AppHomeInitial;
 
   @override
   BaseState get base;
@@ -337,7 +365,7 @@ abstract class HomeInitialState implements HomeState {
   String get currentAsset;
 
   @override
-  HomeInitialState copyWith(
+  AppHomeInitial copyWith(
       {BaseState base,
       int balance,
       String unit,
@@ -346,8 +374,8 @@ abstract class HomeInitialState implements HomeState {
       String currentAsset});
 }
 
-class _$HomeSendSheetState implements HomeSendSheetState {
-  _$HomeSendSheetState(
+class _$AppHomeSendSheet implements AppHomeSendSheet {
+  _$AppHomeSendSheet(
       {this.base,
       this.balance,
       this.unit,
@@ -376,13 +404,13 @@ class _$HomeSendSheetState implements HomeSendSheetState {
 
   @override
   String toString() {
-    return 'HomeState.SendSheetState(base: $base, balance: $balance, unit: $unit, assets: $assets, transactions: $transactions, currentAsset: $currentAsset, destAmount: $destAmount, destAddress: $destAddress)';
+    return 'AppHome.SendSheetState(base: $base, balance: $balance, unit: $unit, assets: $assets, transactions: $transactions, currentAsset: $currentAsset, destAmount: $destAmount, destAddress: $destAddress)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is HomeSendSheetState &&
+        (other is AppHomeSendSheet &&
             (identical(other.base, base) ||
                 const DeepCollectionEquality().equals(other.base, base)) &&
             (identical(other.balance, balance) ||
@@ -419,7 +447,7 @@ class _$HomeSendSheetState implements HomeSendSheetState {
       const DeepCollectionEquality().hash(destAddress);
 
   @override
-  _$HomeSendSheetState copyWith({
+  _$AppHomeSendSheet copyWith({
     Object base = freezed,
     Object balance = freezed,
     Object unit = freezed,
@@ -429,7 +457,7 @@ class _$HomeSendSheetState implements HomeSendSheetState {
     Object destAmount = freezed,
     Object destAddress = freezed,
   }) {
-    return _$HomeSendSheetState(
+    return _$AppHomeSendSheet(
       base: base == freezed ? this.base : base as BaseState,
       balance: balance == freezed ? this.balance : balance as int,
       unit: unit == freezed ? this.unit : unit as String,
@@ -524,9 +552,9 @@ class _$HomeSendSheetState implements HomeSendSheetState {
   @override
   @optionalTypeArgs
   Result map<Result extends Object>(
-    Result $default(HomeInitialState value), {
-    @required Result SendSheetState(HomeSendSheetState value),
-    @required Result MantaSheetState(HomeMantaSheetState value),
+    Result $default(AppHomeInitial value), {
+    @required Result SendSheetState(AppHomeSendSheet value),
+    @required Result MantaSheetState(AppHomeMantaSheet value),
   }) {
     assert($default != null);
     assert(SendSheetState != null);
@@ -537,9 +565,9 @@ class _$HomeSendSheetState implements HomeSendSheetState {
   @override
   @optionalTypeArgs
   Result maybeMap<Result extends Object>(
-    Result $default(HomeInitialState value), {
-    Result SendSheetState(HomeSendSheetState value),
-    Result MantaSheetState(HomeMantaSheetState value),
+    Result $default(AppHomeInitial value), {
+    Result SendSheetState(AppHomeSendSheet value),
+    Result MantaSheetState(AppHomeMantaSheet value),
     @required Result orElse(),
   }) {
     assert(orElse != null);
@@ -550,8 +578,8 @@ class _$HomeSendSheetState implements HomeSendSheetState {
   }
 }
 
-abstract class HomeSendSheetState implements HomeState {
-  factory HomeSendSheetState(
+abstract class AppHomeSendSheet implements AppHome {
+  factory AppHomeSendSheet(
       {BaseState base,
       int balance,
       String unit,
@@ -559,7 +587,7 @@ abstract class HomeSendSheetState implements HomeState {
       List<dynamic> transactions,
       String currentAsset,
       int destAmount,
-      String destAddress}) = _$HomeSendSheetState;
+      String destAddress}) = _$AppHomeSendSheet;
 
   @override
   BaseState get base;
@@ -577,7 +605,7 @@ abstract class HomeSendSheetState implements HomeState {
   String get destAddress;
 
   @override
-  HomeSendSheetState copyWith(
+  AppHomeSendSheet copyWith(
       {BaseState base,
       int balance,
       String unit,
@@ -588,8 +616,8 @@ abstract class HomeSendSheetState implements HomeState {
       String destAddress});
 }
 
-class _$HomeMantaSheetState implements HomeMantaSheetState {
-  _$HomeMantaSheetState(
+class _$AppHomeMantaSheet implements AppHomeMantaSheet {
+  _$AppHomeMantaSheet(
       {this.base,
       this.balance,
       this.unit,
@@ -618,13 +646,13 @@ class _$HomeMantaSheetState implements HomeMantaSheetState {
 
   @override
   String toString() {
-    return 'HomeState.MantaSheetState(base: $base, balance: $balance, unit: $unit, assets: $assets, transactions: $transactions, currentAsset: $currentAsset, merchant: $merchant, destination: $destination)';
+    return 'AppHome.MantaSheetState(base: $base, balance: $balance, unit: $unit, assets: $assets, transactions: $transactions, currentAsset: $currentAsset, merchant: $merchant, destination: $destination)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is HomeMantaSheetState &&
+        (other is AppHomeMantaSheet &&
             (identical(other.base, base) ||
                 const DeepCollectionEquality().equals(other.base, base)) &&
             (identical(other.balance, balance) ||
@@ -661,7 +689,7 @@ class _$HomeMantaSheetState implements HomeMantaSheetState {
       const DeepCollectionEquality().hash(destination);
 
   @override
-  _$HomeMantaSheetState copyWith({
+  _$AppHomeMantaSheet copyWith({
     Object base = freezed,
     Object balance = freezed,
     Object unit = freezed,
@@ -671,7 +699,7 @@ class _$HomeMantaSheetState implements HomeMantaSheetState {
     Object merchant = freezed,
     Object destination = freezed,
   }) {
-    return _$HomeMantaSheetState(
+    return _$AppHomeMantaSheet(
       base: base == freezed ? this.base : base as BaseState,
       balance: balance == freezed ? this.balance : balance as int,
       unit: unit == freezed ? this.unit : unit as String,
@@ -767,9 +795,9 @@ class _$HomeMantaSheetState implements HomeMantaSheetState {
   @override
   @optionalTypeArgs
   Result map<Result extends Object>(
-    Result $default(HomeInitialState value), {
-    @required Result SendSheetState(HomeSendSheetState value),
-    @required Result MantaSheetState(HomeMantaSheetState value),
+    Result $default(AppHomeInitial value), {
+    @required Result SendSheetState(AppHomeSendSheet value),
+    @required Result MantaSheetState(AppHomeMantaSheet value),
   }) {
     assert($default != null);
     assert(SendSheetState != null);
@@ -780,9 +808,9 @@ class _$HomeMantaSheetState implements HomeMantaSheetState {
   @override
   @optionalTypeArgs
   Result maybeMap<Result extends Object>(
-    Result $default(HomeInitialState value), {
-    Result SendSheetState(HomeSendSheetState value),
-    Result MantaSheetState(HomeMantaSheetState value),
+    Result $default(AppHomeInitial value), {
+    Result SendSheetState(AppHomeSendSheet value),
+    Result MantaSheetState(AppHomeMantaSheet value),
     @required Result orElse(),
   }) {
     assert(orElse != null);
@@ -793,8 +821,8 @@ class _$HomeMantaSheetState implements HomeMantaSheetState {
   }
 }
 
-abstract class HomeMantaSheetState implements HomeState {
-  factory HomeMantaSheetState(
+abstract class AppHomeMantaSheet implements AppHome {
+  factory AppHomeMantaSheet(
       {BaseState base,
       int balance,
       String unit,
@@ -802,7 +830,7 @@ abstract class HomeMantaSheetState implements HomeState {
       List<dynamic> transactions,
       String currentAsset,
       Merchant merchant,
-      Destination destination}) = _$HomeMantaSheetState;
+      Destination destination}) = _$AppHomeMantaSheet;
 
   @override
   BaseState get base;
@@ -820,7 +848,7 @@ abstract class HomeMantaSheetState implements HomeState {
   Destination get destination;
 
   @override
-  HomeMantaSheetState copyWith(
+  AppHomeMantaSheet copyWith(
       {BaseState base,
       int balance,
       String unit,
@@ -831,18 +859,18 @@ abstract class HomeMantaSheetState implements HomeState {
       Destination destination});
 }
 
-mixin _$ShowSeedState {
+mixin _$AppSeed {
   BaseState get base;
   AppState get pstate;
   String get address;
   String get privateKey;
 
-  ShowSeedState copyWith(
+  AppSeed copyWith(
       {BaseState base, AppState pstate, String address, String privateKey});
 }
 
-class _$_ShowSeedState implements _ShowSeedState {
-  _$_ShowSeedState({this.base, this.pstate, this.address, this.privateKey});
+class _$_AppSeed implements _AppSeed {
+  _$_AppSeed({this.base, this.pstate, this.address, this.privateKey});
 
   @override
   final BaseState base;
@@ -855,13 +883,13 @@ class _$_ShowSeedState implements _ShowSeedState {
 
   @override
   String toString() {
-    return 'ShowSeedState(base: $base, pstate: $pstate, address: $address, privateKey: $privateKey)';
+    return 'AppSeed(base: $base, pstate: $pstate, address: $address, privateKey: $privateKey)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is _ShowSeedState &&
+        (other is _AppSeed &&
             (identical(other.base, base) ||
                 const DeepCollectionEquality().equals(other.base, base)) &&
             (identical(other.pstate, pstate) ||
@@ -883,13 +911,13 @@ class _$_ShowSeedState implements _ShowSeedState {
       const DeepCollectionEquality().hash(privateKey);
 
   @override
-  _$_ShowSeedState copyWith({
+  _$_AppSeed copyWith({
     Object base = freezed,
     Object pstate = freezed,
     Object address = freezed,
     Object privateKey = freezed,
   }) {
-    return _$_ShowSeedState(
+    return _$_AppSeed(
       base: base == freezed ? this.base : base as BaseState,
       pstate: pstate == freezed ? this.pstate : pstate as AppState,
       address: address == freezed ? this.address : address as String,
@@ -899,12 +927,12 @@ class _$_ShowSeedState implements _ShowSeedState {
   }
 }
 
-abstract class _ShowSeedState implements ShowSeedState {
-  factory _ShowSeedState(
+abstract class _AppSeed implements AppSeed {
+  factory _AppSeed(
       {BaseState base,
       AppState pstate,
       String address,
-      String privateKey}) = _$_ShowSeedState;
+      String privateKey}) = _$_AppSeed;
 
   @override
   BaseState get base;
@@ -916,20 +944,20 @@ abstract class _ShowSeedState implements ShowSeedState {
   String get privateKey;
 
   @override
-  _ShowSeedState copyWith(
+  _AppSeed copyWith(
       {BaseState base, AppState pstate, String address, String privateKey});
 }
 
-mixin _$SettingsState {
+mixin _$AppSettings {
   BaseState get base;
   AppState get pstate;
   String get address;
 
-  SettingsState copyWith({BaseState base, AppState pstate, String address});
+  AppSettings copyWith({BaseState base, AppState pstate, String address});
 }
 
-class _$_SettingsState implements _SettingsState {
-  _$_SettingsState({this.base, this.pstate, this.address});
+class _$_AppSettings implements _AppSettings {
+  _$_AppSettings({this.base, this.pstate, this.address});
 
   @override
   final BaseState base;
@@ -940,13 +968,13 @@ class _$_SettingsState implements _SettingsState {
 
   @override
   String toString() {
-    return 'SettingsState(base: $base, pstate: $pstate, address: $address)';
+    return 'AppSettings(base: $base, pstate: $pstate, address: $address)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is _SettingsState &&
+        (other is _AppSettings &&
             (identical(other.base, base) ||
                 const DeepCollectionEquality().equals(other.base, base)) &&
             (identical(other.pstate, pstate) ||
@@ -963,12 +991,12 @@ class _$_SettingsState implements _SettingsState {
       const DeepCollectionEquality().hash(address);
 
   @override
-  _$_SettingsState copyWith({
+  _$_AppSettings copyWith({
     Object base = freezed,
     Object pstate = freezed,
     Object address = freezed,
   }) {
-    return _$_SettingsState(
+    return _$_AppSettings(
       base: base == freezed ? this.base : base as BaseState,
       pstate: pstate == freezed ? this.pstate : pstate as AppState,
       address: address == freezed ? this.address : address as String,
@@ -976,9 +1004,9 @@ class _$_SettingsState implements _SettingsState {
   }
 }
 
-abstract class _SettingsState implements SettingsState {
-  factory _SettingsState({BaseState base, AppState pstate, String address}) =
-      _$_SettingsState;
+abstract class _AppSettings implements AppSettings {
+  factory _AppSettings({BaseState base, AppState pstate, String address}) =
+      _$_AppSettings;
 
   @override
   BaseState get base;
@@ -988,19 +1016,19 @@ abstract class _SettingsState implements SettingsState {
   String get address;
 
   @override
-  _SettingsState copyWith({BaseState base, AppState pstate, String address});
+  _AppSettings copyWith({BaseState base, AppState pstate, String address});
 }
 
-mixin _$ImportSeedState {
+mixin _$AppImportSeed {
   BaseState get base;
   AppState get pstate;
   String get address;
 
-  ImportSeedState copyWith({BaseState base, AppState pstate, String address});
+  AppImportSeed copyWith({BaseState base, AppState pstate, String address});
 }
 
-class _$_ImportSeedState implements _ImportSeedState {
-  _$_ImportSeedState({this.base, this.pstate, this.address});
+class _$_AppImportSeed implements _AppImportSeed {
+  _$_AppImportSeed({this.base, this.pstate, this.address});
 
   @override
   final BaseState base;
@@ -1011,13 +1039,13 @@ class _$_ImportSeedState implements _ImportSeedState {
 
   @override
   String toString() {
-    return 'ImportSeedState(base: $base, pstate: $pstate, address: $address)';
+    return 'AppImportSeed(base: $base, pstate: $pstate, address: $address)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
-        (other is _ImportSeedState &&
+        (other is _AppImportSeed &&
             (identical(other.base, base) ||
                 const DeepCollectionEquality().equals(other.base, base)) &&
             (identical(other.pstate, pstate) ||
@@ -1034,12 +1062,12 @@ class _$_ImportSeedState implements _ImportSeedState {
       const DeepCollectionEquality().hash(address);
 
   @override
-  _$_ImportSeedState copyWith({
+  _$_AppImportSeed copyWith({
     Object base = freezed,
     Object pstate = freezed,
     Object address = freezed,
   }) {
-    return _$_ImportSeedState(
+    return _$_AppImportSeed(
       base: base == freezed ? this.base : base as BaseState,
       pstate: pstate == freezed ? this.pstate : pstate as AppState,
       address: address == freezed ? this.address : address as String,
@@ -1047,9 +1075,9 @@ class _$_ImportSeedState implements _ImportSeedState {
   }
 }
 
-abstract class _ImportSeedState implements ImportSeedState {
-  factory _ImportSeedState({BaseState base, AppState pstate, String address}) =
-      _$_ImportSeedState;
+abstract class _AppImportSeed implements AppImportSeed {
+  factory _AppImportSeed({BaseState base, AppState pstate, String address}) =
+      _$_AppImportSeed;
 
   @override
   BaseState get base;
@@ -1059,5 +1087,5 @@ abstract class _ImportSeedState implements ImportSeedState {
   String get address;
 
   @override
-  _ImportSeedState copyWith({BaseState base, AppState pstate, String address});
+  _AppImportSeed copyWith({BaseState base, AppState pstate, String address});
 }

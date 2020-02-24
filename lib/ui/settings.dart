@@ -9,13 +9,13 @@ class Settings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppBloc appBloc = BlocProvider.of<AppBloc>(context);
-    final s = appBloc.state as SettingsState;
+    final s = appBloc.state as AppSettings;
 
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: Colors.white,),
-            onPressed: () { appBloc.add(Back());},
+            onPressed: () { appBloc.add(AppBack());},
           ),
             title: Text('Settings')),
         body: Column(
@@ -30,7 +30,7 @@ class Settings extends StatelessWidget {
                   Divider(),
                   ListTile(
                     title: Text('Import Seed'),
-                    onTap: () { appBloc.add(ShowImportSeed());},
+                    onTap: () { appBloc.add(AppImportSeedShow());},
                   ),
                   Divider(),
                 ],

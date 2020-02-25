@@ -1,13 +1,14 @@
 import 'package:manta_dart/messages.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:dart_algorand/algod.dart';
+import 'package:dart_algorand/dart_algorand.dart';
 
 part 'app_state.freezed.dart';
 
 
 @freezed
 abstract class BaseState with _$BaseState {
-  factory BaseState({Account accountInfo}) = _BaseState;
+  factory BaseState({Account accountInfo, AlgoAccount account}) = _BaseState;
 }
 
 abstract class AppState {
@@ -89,15 +90,12 @@ abstract class Backable {
 @freezed
 abstract class AppSeed with _$AppSeed implements AppState, Backable {
   factory AppSeed(
-      {BaseState base,
-      AppState pstate,
-      String address,
-      String privateKey}) = _AppSeed;
+      {BaseState base, AppState pstate}) = _AppSeed;
 }
 
 @freezed
 abstract class AppSettings with _$AppSettings implements AppState, Backable {
-  factory AppSettings({BaseState base, AppState pstate, String address}) =
+  factory AppSettings({BaseState base, AppState pstate}) =
       _AppSettings;
 }
 

@@ -16,10 +16,14 @@ class AppHomeInitialMapper with Mapper {
           currentAsset: asset);
     } else if (event is AppTransactionsUpdate) {
       yield state.copyWith(transactions: event.transactions);
-    } else if (event is AppSendSheetShow) {
+    } else if (event is AppSettingsShow) {
+      yield AppSettings(base: state.base, pstate: state);
+    }
+
+    else if (event is AppSendSheetShow) {
       yield state.toSendSheet();
     } else {
-      throw UnimplementedError('$event not handled $state');
+      throw UnimplementedError('$event not handled in $state');
     }
   }
 

@@ -9,19 +9,22 @@ part of 'app_state.dart';
 
 mixin _$BaseState {
   Account get accountInfo;
+  AlgoAccount get account;
 
-  BaseState copyWith({Account accountInfo});
+  BaseState copyWith({Account accountInfo, AlgoAccount account});
 }
 
 class _$_BaseState implements _BaseState {
-  _$_BaseState({this.accountInfo});
+  _$_BaseState({this.accountInfo, this.account});
 
   @override
   final Account accountInfo;
+  @override
+  final AlgoAccount account;
 
   @override
   String toString() {
-    return 'BaseState(accountInfo: $accountInfo)';
+    return 'BaseState(accountInfo: $accountInfo, account: $account)';
   }
 
   @override
@@ -30,32 +33,40 @@ class _$_BaseState implements _BaseState {
         (other is _BaseState &&
             (identical(other.accountInfo, accountInfo) ||
                 const DeepCollectionEquality()
-                    .equals(other.accountInfo, accountInfo)));
+                    .equals(other.accountInfo, accountInfo)) &&
+            (identical(other.account, account) ||
+                const DeepCollectionEquality().equals(other.account, account)));
   }
 
   @override
   int get hashCode =>
-      runtimeType.hashCode ^ const DeepCollectionEquality().hash(accountInfo);
+      runtimeType.hashCode ^
+      const DeepCollectionEquality().hash(accountInfo) ^
+      const DeepCollectionEquality().hash(account);
 
   @override
   _$_BaseState copyWith({
     Object accountInfo = freezed,
+    Object account = freezed,
   }) {
     return _$_BaseState(
       accountInfo:
           accountInfo == freezed ? this.accountInfo : accountInfo as Account,
+      account: account == freezed ? this.account : account as AlgoAccount,
     );
   }
 }
 
 abstract class _BaseState implements BaseState {
-  factory _BaseState({Account accountInfo}) = _$_BaseState;
+  factory _BaseState({Account accountInfo, AlgoAccount account}) = _$_BaseState;
 
   @override
   Account get accountInfo;
+  @override
+  AlgoAccount get account;
 
   @override
-  _BaseState copyWith({Account accountInfo});
+  _BaseState copyWith({Account accountInfo, AlgoAccount account});
 }
 
 mixin _$AppHome {
@@ -862,28 +873,21 @@ abstract class AppHomeMantaSheet implements AppHome {
 mixin _$AppSeed {
   BaseState get base;
   AppState get pstate;
-  String get address;
-  String get privateKey;
 
-  AppSeed copyWith(
-      {BaseState base, AppState pstate, String address, String privateKey});
+  AppSeed copyWith({BaseState base, AppState pstate});
 }
 
 class _$_AppSeed implements _AppSeed {
-  _$_AppSeed({this.base, this.pstate, this.address, this.privateKey});
+  _$_AppSeed({this.base, this.pstate});
 
   @override
   final BaseState base;
   @override
   final AppState pstate;
-  @override
-  final String address;
-  @override
-  final String privateKey;
 
   @override
   String toString() {
-    return 'AppSeed(base: $base, pstate: $pstate, address: $address, privateKey: $privateKey)';
+    return 'AppSeed(base: $base, pstate: $pstate)';
   }
 
   @override
@@ -893,82 +897,57 @@ class _$_AppSeed implements _AppSeed {
             (identical(other.base, base) ||
                 const DeepCollectionEquality().equals(other.base, base)) &&
             (identical(other.pstate, pstate) ||
-                const DeepCollectionEquality().equals(other.pstate, pstate)) &&
-            (identical(other.address, address) ||
-                const DeepCollectionEquality()
-                    .equals(other.address, address)) &&
-            (identical(other.privateKey, privateKey) ||
-                const DeepCollectionEquality()
-                    .equals(other.privateKey, privateKey)));
+                const DeepCollectionEquality().equals(other.pstate, pstate)));
   }
 
   @override
   int get hashCode =>
       runtimeType.hashCode ^
       const DeepCollectionEquality().hash(base) ^
-      const DeepCollectionEquality().hash(pstate) ^
-      const DeepCollectionEquality().hash(address) ^
-      const DeepCollectionEquality().hash(privateKey);
+      const DeepCollectionEquality().hash(pstate);
 
   @override
   _$_AppSeed copyWith({
     Object base = freezed,
     Object pstate = freezed,
-    Object address = freezed,
-    Object privateKey = freezed,
   }) {
     return _$_AppSeed(
       base: base == freezed ? this.base : base as BaseState,
       pstate: pstate == freezed ? this.pstate : pstate as AppState,
-      address: address == freezed ? this.address : address as String,
-      privateKey:
-          privateKey == freezed ? this.privateKey : privateKey as String,
     );
   }
 }
 
 abstract class _AppSeed implements AppSeed {
-  factory _AppSeed(
-      {BaseState base,
-      AppState pstate,
-      String address,
-      String privateKey}) = _$_AppSeed;
+  factory _AppSeed({BaseState base, AppState pstate}) = _$_AppSeed;
 
   @override
   BaseState get base;
   @override
   AppState get pstate;
-  @override
-  String get address;
-  @override
-  String get privateKey;
 
   @override
-  _AppSeed copyWith(
-      {BaseState base, AppState pstate, String address, String privateKey});
+  _AppSeed copyWith({BaseState base, AppState pstate});
 }
 
 mixin _$AppSettings {
   BaseState get base;
   AppState get pstate;
-  String get address;
 
-  AppSettings copyWith({BaseState base, AppState pstate, String address});
+  AppSettings copyWith({BaseState base, AppState pstate});
 }
 
 class _$_AppSettings implements _AppSettings {
-  _$_AppSettings({this.base, this.pstate, this.address});
+  _$_AppSettings({this.base, this.pstate});
 
   @override
   final BaseState base;
   @override
   final AppState pstate;
-  @override
-  final String address;
 
   @override
   String toString() {
-    return 'AppSettings(base: $base, pstate: $pstate, address: $address)';
+    return 'AppSettings(base: $base, pstate: $pstate)';
   }
 
   @override
@@ -978,45 +957,37 @@ class _$_AppSettings implements _AppSettings {
             (identical(other.base, base) ||
                 const DeepCollectionEquality().equals(other.base, base)) &&
             (identical(other.pstate, pstate) ||
-                const DeepCollectionEquality().equals(other.pstate, pstate)) &&
-            (identical(other.address, address) ||
-                const DeepCollectionEquality().equals(other.address, address)));
+                const DeepCollectionEquality().equals(other.pstate, pstate)));
   }
 
   @override
   int get hashCode =>
       runtimeType.hashCode ^
       const DeepCollectionEquality().hash(base) ^
-      const DeepCollectionEquality().hash(pstate) ^
-      const DeepCollectionEquality().hash(address);
+      const DeepCollectionEquality().hash(pstate);
 
   @override
   _$_AppSettings copyWith({
     Object base = freezed,
     Object pstate = freezed,
-    Object address = freezed,
   }) {
     return _$_AppSettings(
       base: base == freezed ? this.base : base as BaseState,
       pstate: pstate == freezed ? this.pstate : pstate as AppState,
-      address: address == freezed ? this.address : address as String,
     );
   }
 }
 
 abstract class _AppSettings implements AppSettings {
-  factory _AppSettings({BaseState base, AppState pstate, String address}) =
-      _$_AppSettings;
+  factory _AppSettings({BaseState base, AppState pstate}) = _$_AppSettings;
 
   @override
   BaseState get base;
   @override
   AppState get pstate;
-  @override
-  String get address;
 
   @override
-  _AppSettings copyWith({BaseState base, AppState pstate, String address});
+  _AppSettings copyWith({BaseState base, AppState pstate});
 }
 
 mixin _$AppImportSeed {

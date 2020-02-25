@@ -18,13 +18,13 @@ class ShowSeed extends StatelessWidget {
             TextFormField(
               enabled: false,
               maxLines: null,
-              initialValue: s.address,
+              initialValue: s.base.account.address,
               decoration: InputDecoration(labelText: 'Address'),
             ),
             TextFormField(
                 enabled: false,
                 maxLines: null,
-                initialValue: s.privateKey,
+                initialValue: s.base.account.private_key,
                 decoration: InputDecoration(labelText: 'Private Key')),
             RaisedButton(
               child: Text('OKAY'),

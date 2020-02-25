@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:algo_explorer_api/algo_explorer_api.dart';
+import 'package:algorand_flutter/blocs/AppImportSeedMapper.dart';
+import 'package:algorand_flutter/blocs/AppSeedMapper.dart';
 import 'package:algorand_flutter/blocs/utils.dart';
 import 'package:bloc/bloc.dart';
 import 'package:dart_algorand/algod.dart' as algod;
@@ -13,6 +15,7 @@ import 'package:meta/meta.dart';
 import '../configuration.dart';
 import 'AppHomeMantaSheetMapper.dart';
 import 'AppHomeSendSheetMapper.dart';
+import 'AppSettingsMapper.dart';
 import 'app_event.dart';
 import 'app_state.dart';
 import 'package:dio/dio.dart';
@@ -22,12 +25,17 @@ import 'AppHomeInitialMapper.dart';
 final Logger logger = Logger('AlgoWallet');
 
 class AppBloc extends Bloc<AppEvent, AppState>
-    with AppHomeSendSheetMapper, AppHomeInitialMapper, AppHomeMantaSheetMapper {
+    with
+        AppHomeSendSheetMapper,
+        AppHomeInitialMapper,
+        AppHomeMantaSheetMapper,
+        AppSettingsMapper,
+        AppImportSeedMapper,
+        AppSeedMapper {
   AccountApi accountApi;
   algod.AlgodApi client;
   Timer accountTimer;
   MantaWallet mantaWallet;
-  Account account;
   Configuration configuration;
 
   AppBloc({@required this.configuration}) : super();
@@ -38,7 +46,6 @@ class AppBloc extends Bloc<AppEvent, AppState>
     accountApi = ExplorerApi().getAccountApi();
     print(configuration.key);
     configuration.key = '123';
-    generateNewAccount();
     return initHome();
 
     //return ShowSeedState(address: account.address, privateKey: account.private_key);
@@ -50,7 +57,10 @@ class AppBloc extends Bloc<AppEvent, AppState>
     getAccountInformation();
     startTimer();
 
-    return AppHome(base: BaseState(), transactions: [], currentAsset: 'algo');
+    return AppHome(
+        base: BaseState(account: generate_account()),
+        transactions: [],
+        currentAsset: 'algo');
   }
 
   @override
@@ -61,6 +71,12 @@ class AppBloc extends Bloc<AppEvent, AppState>
       yield* mapAppHomeSendSheetToState(event, state);
     } else if (state is AppHomeMantaSheet) {
       yield* mapAppHomeMantaSheetToState(event, state);
+    } else if (state is AppSettings) {
+      yield* mapAppSettingsToState(event, state);
+    } else if (state is AppImportSeed) {
+      yield* mapAppImportSeedToState(event, state);
+    } else if (state is AppSeed) {
+      yield* mapAppSeedToState(event, state);
     } else {
       throw UnimplementedError('Appbloc was unable to map $event');
     }
@@ -70,26 +86,9 @@ class AppBloc extends Bloc<AppEvent, AppState>
   Stream<AppState> mapGlobalEventToState(AppEvent event) async* {
     if (event is AppSend) {
       yield* _mapSendToState(event);
-    } else if (event is AppSeedImported) {
-      account = Account(
-          private_key: to_private_key(event.seed),
-          address: to_public_key(event.seed));
-      yield AppSeed(address: account.address, privateKey: account.private_key);
-    } else if (event is AppSettingsShow) {
-      yield AppSettings(address: account.address, pstate: state);
-    } else if (event is AppBack) {
-      yield (state as Backable).pstate;
-    } else if (event is AppImportSeedShow) {
-      yield AppImportSeed(pstate: state);
-    } else if (event is AppForward) {
-      if (state is AppSeed) {
-        yield initHome();
-      }
+    } else {
+      throw UnimplementedError('Appbloc (global) was unable to map $event');
     }
-  }
-
-  generateNewAccount() {
-    account = generate_account();
   }
 
   getAccountInformation() async {

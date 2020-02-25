@@ -24,7 +24,7 @@ class Settings extends StatelessWidget {
               child: ListView(
                 children: <Widget>[
                   ListTile(
-                    title: Text(s.address),
+                    title: Text(s.base.account.address),
                     subtitle: Text('Address'),
                   ),
                   Divider(),

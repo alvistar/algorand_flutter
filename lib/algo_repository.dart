@@ -10,7 +10,7 @@ import 'package:dio/dio.dart';
 class AlgoRepository {
   algod.AlgodApi algodApi;
   AccountApi accountApi;
-  Map<String, AssetParams> assetInformation= <String, AssetParams>{};
+  Map<String, AssetParams> assetInformation = <String, AssetParams>{};
 
   AlgoRepository() {
     algodApi = init_client();
@@ -21,8 +21,14 @@ class AlgoRepository {
     return (await algodApi.accountInformation(address)).data;
   }
 
-  Future<List> getLatestTransactionsByIndex({String address, int limit}) async {
-    return (await accountApi.accountsGetLatestByIndex(address, 5)).data;
+//  Future<List> getLatestTransactionsByIndex({String address, int limit}) async {
+//    return (await accountApi.accountsGetLatestByIndex(address, 5)).data;
+//  }
+
+  Future<List> getLatestAssetTransactionsByIndex(
+      {String address, int limit, int asset}) async {
+    return (await accountApi.accountsGetLatestAssetEventByIndex(
+        address: address, count: 5, assetID: asset)).data;
   }
 
   Future<TransactionParams> getTransactionParams() async {

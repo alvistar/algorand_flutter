@@ -52,13 +52,15 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(
-            title: Text('Algorand'),
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(Icons.settings),
-                onPressed: () { appBloc.add(AppSettingsShow());},
-              )
-            ],
+          title: Text('Algorand'),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.settings),
+              onPressed: () {
+                appBloc.add(AppSettingsShow());
+              },
+            )
+          ],
         ),
         body: BlocListener<AppBloc, AppState>(
           condition: (previous, current) {
@@ -97,10 +99,10 @@ class HomePage extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Card(
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
                       Text((appBloc.state as AppHome).balance.toString()),
                       assetDropdown(
                           current: (appBloc.state as AppHome).currentAsset,
@@ -109,16 +111,21 @@ class HomePage extends StatelessWidget {
                             appBloc.add(AppAssetChanged(value));
                           })
                     ]),
-                  )),
+              )),
             ),
             Expanded(
                 child:
-                    transactionList((appBloc.state as AppHome).transactions)),
-            RaisedButton(
-              child: const Text('SEND'),
-              onPressed: () {
-                appBloc.add(AppSendSheetShow());
-              },
+                    transactionList(
+                        address: appBloc.state.base.account.address,
+                        transactions:(appBloc.state as AppHome).transactions)),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: RaisedButton(
+                child: const Text('SEND'),
+                onPressed: () {
+                  appBloc.add(AppSendSheetShow());
+                },
+              ),
             )
           ]),
         ));
@@ -144,14 +151,43 @@ assetDropdown(
       onChanged: onChanged);
 }
 
-transactionList(List transactions) {
+transactionList({List transactions, String address}) {
   final pts = transactions.whereType<TransactionPay>();
-  final listIter = pts.map((entry) => ListTile(
-        title: Text(entry.to),
-        subtitle: Text(entry.amount.toString()),
-      ));
+  final apts = transactions.whereType<TransactionAssetTransfer>();
+//  final listIter = pts.map((entry) => ListTile(
+//        title: Text(entry.to),
+//        subtitle: Text(entry.amount.toString()),
+//      ));
+
+  final listIter = pts.map((entry) => transactionEntry(
+      destination: entry.to, amount: entry.amount, sent: entry.to != address));
+
+  final aListIter = apts.map((entry) => transactionEntry(
+      destination: entry.to, amount: entry.amount, sent: entry.to != address));
+
+  final entries = listIter.toList();
+  entries.addAll(aListIter);
 
   return ListView(
-    children: listIter.toList(),
+    children: entries,
   );
+}
+
+Widget transactionEntry({String destination, int amount, bool sent}) {
+  return Card(
+      child: Row(
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    children: <Widget>[
+      Column(
+        children: <Widget>[
+          Text(
+            sent ? 'Sent' : 'Received',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          Text(amount.toString()),
+        ],
+      ),
+      Text(destination)
+    ],
+  ));
 }

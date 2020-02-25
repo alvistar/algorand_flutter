@@ -65,7 +65,7 @@ class AppBloc extends Bloc<AppEvent, AppState>
   }
 
   initHome(AlgoAccount account) {
-    getAccountInformation(account.address);
+    getAccountInformation(account.address, -1);
     startTimer();
 
     return AppHome(
@@ -106,13 +106,13 @@ class AppBloc extends Bloc<AppEvent, AppState>
     }
   }
 
-  getAccountInformation(String address) async {
+  getAccountInformation(String address, int asset) async {
     logger.fine('Updating account $address');
     final accountInfo = await repository.getAccountInformation(address);
     add(AppAccountInfoUpdate(accountInfo));
 
-    final latest = await repository.getLatestTransactionsByIndex(
-        address: address, limit: 5);
+    final latest = await repository.getLatestAssetTransactionsByIndex(
+        address: address, limit: 5, asset: asset);
     this.add(AppTransactionsUpdate(latest));
   }
 
@@ -185,7 +185,8 @@ class AppBloc extends Bloc<AppEvent, AppState>
   startTimer() {
     logger.fine('Starting account timer');
     accountTimer = Timer.periodic(const Duration(seconds: 5), (_) {
-      getAccountInformation(state.base.account.address);
+      final s = state as AppHomeInitial;
+      getAccountInformation(s.base.account.address, s.currentAsset);
     });
   }
 
@@ -209,7 +210,10 @@ class AppBloc extends Bloc<AppEvent, AppState>
 
       // Refresh accountinfo if we changed account
       if (transition.currentState is AppSeed) {
-        getAccountInformation(transition.nextState.base.account.address);
+        getAccountInformation(
+            transition.nextState.base.account.address,
+            -1
+        );
       }
     }
 

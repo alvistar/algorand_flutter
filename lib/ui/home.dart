@@ -126,18 +126,18 @@ class HomePage extends StatelessWidget {
 }
 
 assetDropdown(
-    {String current,
-    List<String> assets,
-    void Function(String value) onChanged}) {
-  return DropdownButton<String>(
+    {int current,
+    Map<String, int> assets,
+    void Function(int value) onChanged}) {
+  return DropdownButton<int>(
       hint: Text('Select currency'),
       value: current,
       icon: Icon(Icons.arrow_downward),
       iconSize: 24,
       elevation: 16,
-      items: assets
+      items: assets.keys
           .map((e) => DropdownMenuItem(
-                value: e,
+                value: assets[e],
                 child: Text(e),
               ))
           .toList(),

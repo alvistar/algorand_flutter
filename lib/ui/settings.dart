@@ -30,8 +30,8 @@ class Settings extends StatelessWidget {
                   ),
                   Divider(),
                   ListTile(
-                    title: Text('Import Seed'),
-                    onTap: () { appBloc.add(AppImportSeedShow());},
+                    title: Text('Reset Account'),
+                    onTap: () { appBloc.add(AppSeedReset());},
                   ),
                   Divider(),
                 ],

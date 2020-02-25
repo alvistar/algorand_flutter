@@ -73,19 +73,19 @@ mixin _$AppHome {
   BaseState get base;
   int get balance;
   String get unit;
-  @Default(const <String>[])
-  List<String> get assets;
+  @Default(const {})
+  Map<String, int> get assets;
   @Default(const [])
   List<dynamic> get transactions;
-  String get currentAsset;
+  int get currentAsset;
 
   AppHome copyWith(
       {BaseState base,
       int balance,
       String unit,
-      @Default(const <String>[]) List<String> assets,
+      @Default(const {}) Map<String, int> assets,
       @Default(const []) List<dynamic> transactions,
-      String currentAsset});
+      int currentAsset});
 
   @optionalTypeArgs
   Result when<Result extends Object>(
@@ -93,17 +93,17 @@ mixin _$AppHome {
         BaseState base,
         int balance,
         String unit,
-        @Default(const <String>[]) List<String> assets,
+        @Default(const {}) Map<String, int> assets,
         @Default(const []) List<dynamic> transactions,
-        String currentAsset), {
+        int currentAsset), {
     @required
         Result SendSheetState(
             BaseState base,
             int balance,
             String unit,
-            List<String> assets,
+            Map<String, int> assets,
             List<dynamic> transactions,
-            String currentAsset,
+            int currentAsset,
             int destAmount,
             String destAddress),
     @required
@@ -111,9 +111,9 @@ mixin _$AppHome {
             BaseState base,
             int balance,
             String unit,
-            List<String> assets,
+            Map<String, int> assets,
             List<dynamic> transactions,
-            String currentAsset,
+            int currentAsset,
             Merchant merchant,
             Destination destination),
   });
@@ -124,25 +124,25 @@ mixin _$AppHome {
         BaseState base,
         int balance,
         String unit,
-        @Default(const <String>[]) List<String> assets,
+        @Default(const {}) Map<String, int> assets,
         @Default(const []) List<dynamic> transactions,
-        String currentAsset), {
+        int currentAsset), {
     Result SendSheetState(
         BaseState base,
         int balance,
         String unit,
-        List<String> assets,
+        Map<String, int> assets,
         List<dynamic> transactions,
-        String currentAsset,
+        int currentAsset,
         int destAmount,
         String destAddress),
     Result MantaSheetState(
         BaseState base,
         int balance,
         String unit,
-        List<String> assets,
+        Map<String, int> assets,
         List<dynamic> transactions,
-        String currentAsset,
+        int currentAsset,
         Merchant merchant,
         Destination destination),
     @required Result orElse(),
@@ -169,7 +169,7 @@ class _$AppHomeInitial implements AppHomeInitial {
       {this.base,
       this.balance,
       this.unit,
-      @Default(const <String>[]) this.assets = const <String>[],
+      @Default(const {}) this.assets = const {},
       @Default(const []) this.transactions = const [],
       this.currentAsset});
 
@@ -179,16 +179,16 @@ class _$AppHomeInitial implements AppHomeInitial {
   final int balance;
   @override
   final String unit;
-  @JsonKey(defaultValue: const <String>[])
+  @JsonKey(defaultValue: const {})
   @override
-  @Default(const <String>[])
-  final List<String> assets;
+  @Default(const {})
+  final Map<String, int> assets;
   @JsonKey(defaultValue: const [])
   @override
   @Default(const [])
   final List<dynamic> transactions;
   @override
-  final String currentAsset;
+  final int currentAsset;
 
   @override
   String toString() {
@@ -239,12 +239,12 @@ class _$AppHomeInitial implements AppHomeInitial {
       base: base == freezed ? this.base : base as BaseState,
       balance: balance == freezed ? this.balance : balance as int,
       unit: unit == freezed ? this.unit : unit as String,
-      assets: assets == freezed ? this.assets : assets as List<String>,
+      assets: assets == freezed ? this.assets : assets as Map<String, int>,
       transactions: transactions == freezed
           ? this.transactions
           : transactions as List<dynamic>,
       currentAsset:
-          currentAsset == freezed ? this.currentAsset : currentAsset as String,
+          currentAsset == freezed ? this.currentAsset : currentAsset as int,
     );
   }
 
@@ -255,17 +255,17 @@ class _$AppHomeInitial implements AppHomeInitial {
         BaseState base,
         int balance,
         String unit,
-        @Default(const <String>[]) List<String> assets,
+        @Default(const {}) Map<String, int> assets,
         @Default(const []) List<dynamic> transactions,
-        String currentAsset), {
+        int currentAsset), {
     @required
         Result SendSheetState(
             BaseState base,
             int balance,
             String unit,
-            List<String> assets,
+            Map<String, int> assets,
             List<dynamic> transactions,
-            String currentAsset,
+            int currentAsset,
             int destAmount,
             String destAddress),
     @required
@@ -273,9 +273,9 @@ class _$AppHomeInitial implements AppHomeInitial {
             BaseState base,
             int balance,
             String unit,
-            List<String> assets,
+            Map<String, int> assets,
             List<dynamic> transactions,
-            String currentAsset,
+            int currentAsset,
             Merchant merchant,
             Destination destination),
   }) {
@@ -292,25 +292,25 @@ class _$AppHomeInitial implements AppHomeInitial {
         BaseState base,
         int balance,
         String unit,
-        @Default(const <String>[]) List<String> assets,
+        @Default(const {}) Map<String, int> assets,
         @Default(const []) List<dynamic> transactions,
-        String currentAsset), {
+        int currentAsset), {
     Result SendSheetState(
         BaseState base,
         int balance,
         String unit,
-        List<String> assets,
+        Map<String, int> assets,
         List<dynamic> transactions,
-        String currentAsset,
+        int currentAsset,
         int destAmount,
         String destAddress),
     Result MantaSheetState(
         BaseState base,
         int balance,
         String unit,
-        List<String> assets,
+        Map<String, int> assets,
         List<dynamic> transactions,
-        String currentAsset,
+        int currentAsset,
         Merchant merchant,
         Destination destination),
     @required Result orElse(),
@@ -356,9 +356,9 @@ abstract class AppHomeInitial implements AppHome {
       {BaseState base,
       int balance,
       String unit,
-      @Default(const <String>[]) List<String> assets,
+      @Default(const {}) Map<String, int> assets,
       @Default(const []) List<dynamic> transactions,
-      String currentAsset}) = _$AppHomeInitial;
+      int currentAsset}) = _$AppHomeInitial;
 
   @override
   BaseState get base;
@@ -367,22 +367,22 @@ abstract class AppHomeInitial implements AppHome {
   @override
   String get unit;
   @override
-  @Default(const <String>[])
-  List<String> get assets;
+  @Default(const {})
+  Map<String, int> get assets;
   @override
   @Default(const [])
   List<dynamic> get transactions;
   @override
-  String get currentAsset;
+  int get currentAsset;
 
   @override
   AppHomeInitial copyWith(
       {BaseState base,
       int balance,
       String unit,
-      @Default(const <String>[]) List<String> assets,
+      @Default(const {}) Map<String, int> assets,
       @Default(const []) List<dynamic> transactions,
-      String currentAsset});
+      int currentAsset});
 }
 
 class _$AppHomeSendSheet implements AppHomeSendSheet {
@@ -403,11 +403,11 @@ class _$AppHomeSendSheet implements AppHomeSendSheet {
   @override
   final String unit;
   @override
-  final List<String> assets;
+  final Map<String, int> assets;
   @override
   final List<dynamic> transactions;
   @override
-  final String currentAsset;
+  final int currentAsset;
   @override
   final int destAmount;
   @override
@@ -472,12 +472,12 @@ class _$AppHomeSendSheet implements AppHomeSendSheet {
       base: base == freezed ? this.base : base as BaseState,
       balance: balance == freezed ? this.balance : balance as int,
       unit: unit == freezed ? this.unit : unit as String,
-      assets: assets == freezed ? this.assets : assets as List<String>,
+      assets: assets == freezed ? this.assets : assets as Map<String, int>,
       transactions: transactions == freezed
           ? this.transactions
           : transactions as List<dynamic>,
       currentAsset:
-          currentAsset == freezed ? this.currentAsset : currentAsset as String,
+          currentAsset == freezed ? this.currentAsset : currentAsset as int,
       destAmount: destAmount == freezed ? this.destAmount : destAmount as int,
       destAddress:
           destAddress == freezed ? this.destAddress : destAddress as String,
@@ -491,17 +491,17 @@ class _$AppHomeSendSheet implements AppHomeSendSheet {
         BaseState base,
         int balance,
         String unit,
-        @Default(const <String>[]) List<String> assets,
+        @Default(const {}) Map<String, int> assets,
         @Default(const []) List<dynamic> transactions,
-        String currentAsset), {
+        int currentAsset), {
     @required
         Result SendSheetState(
             BaseState base,
             int balance,
             String unit,
-            List<String> assets,
+            Map<String, int> assets,
             List<dynamic> transactions,
-            String currentAsset,
+            int currentAsset,
             int destAmount,
             String destAddress),
     @required
@@ -509,9 +509,9 @@ class _$AppHomeSendSheet implements AppHomeSendSheet {
             BaseState base,
             int balance,
             String unit,
-            List<String> assets,
+            Map<String, int> assets,
             List<dynamic> transactions,
-            String currentAsset,
+            int currentAsset,
             Merchant merchant,
             Destination destination),
   }) {
@@ -529,25 +529,25 @@ class _$AppHomeSendSheet implements AppHomeSendSheet {
         BaseState base,
         int balance,
         String unit,
-        @Default(const <String>[]) List<String> assets,
+        @Default(const {}) Map<String, int> assets,
         @Default(const []) List<dynamic> transactions,
-        String currentAsset), {
+        int currentAsset), {
     Result SendSheetState(
         BaseState base,
         int balance,
         String unit,
-        List<String> assets,
+        Map<String, int> assets,
         List<dynamic> transactions,
-        String currentAsset,
+        int currentAsset,
         int destAmount,
         String destAddress),
     Result MantaSheetState(
         BaseState base,
         int balance,
         String unit,
-        List<String> assets,
+        Map<String, int> assets,
         List<dynamic> transactions,
-        String currentAsset,
+        int currentAsset,
         Merchant merchant,
         Destination destination),
     @required Result orElse(),
@@ -594,9 +594,9 @@ abstract class AppHomeSendSheet implements AppHome {
       {BaseState base,
       int balance,
       String unit,
-      List<String> assets,
+      Map<String, int> assets,
       List<dynamic> transactions,
-      String currentAsset,
+      int currentAsset,
       int destAmount,
       String destAddress}) = _$AppHomeSendSheet;
 
@@ -607,11 +607,11 @@ abstract class AppHomeSendSheet implements AppHome {
   @override
   String get unit;
   @override
-  List<String> get assets;
+  Map<String, int> get assets;
   @override
   List<dynamic> get transactions;
   @override
-  String get currentAsset;
+  int get currentAsset;
   int get destAmount;
   String get destAddress;
 
@@ -620,9 +620,9 @@ abstract class AppHomeSendSheet implements AppHome {
       {BaseState base,
       int balance,
       String unit,
-      List<String> assets,
+      Map<String, int> assets,
       List<dynamic> transactions,
-      String currentAsset,
+      int currentAsset,
       int destAmount,
       String destAddress});
 }
@@ -645,11 +645,11 @@ class _$AppHomeMantaSheet implements AppHomeMantaSheet {
   @override
   final String unit;
   @override
-  final List<String> assets;
+  final Map<String, int> assets;
   @override
   final List<dynamic> transactions;
   @override
-  final String currentAsset;
+  final int currentAsset;
   @override
   final Merchant merchant;
   @override
@@ -714,12 +714,12 @@ class _$AppHomeMantaSheet implements AppHomeMantaSheet {
       base: base == freezed ? this.base : base as BaseState,
       balance: balance == freezed ? this.balance : balance as int,
       unit: unit == freezed ? this.unit : unit as String,
-      assets: assets == freezed ? this.assets : assets as List<String>,
+      assets: assets == freezed ? this.assets : assets as Map<String, int>,
       transactions: transactions == freezed
           ? this.transactions
           : transactions as List<dynamic>,
       currentAsset:
-          currentAsset == freezed ? this.currentAsset : currentAsset as String,
+          currentAsset == freezed ? this.currentAsset : currentAsset as int,
       merchant: merchant == freezed ? this.merchant : merchant as Merchant,
       destination: destination == freezed
           ? this.destination
@@ -734,17 +734,17 @@ class _$AppHomeMantaSheet implements AppHomeMantaSheet {
         BaseState base,
         int balance,
         String unit,
-        @Default(const <String>[]) List<String> assets,
+        @Default(const {}) Map<String, int> assets,
         @Default(const []) List<dynamic> transactions,
-        String currentAsset), {
+        int currentAsset), {
     @required
         Result SendSheetState(
             BaseState base,
             int balance,
             String unit,
-            List<String> assets,
+            Map<String, int> assets,
             List<dynamic> transactions,
-            String currentAsset,
+            int currentAsset,
             int destAmount,
             String destAddress),
     @required
@@ -752,9 +752,9 @@ class _$AppHomeMantaSheet implements AppHomeMantaSheet {
             BaseState base,
             int balance,
             String unit,
-            List<String> assets,
+            Map<String, int> assets,
             List<dynamic> transactions,
-            String currentAsset,
+            int currentAsset,
             Merchant merchant,
             Destination destination),
   }) {
@@ -772,25 +772,25 @@ class _$AppHomeMantaSheet implements AppHomeMantaSheet {
         BaseState base,
         int balance,
         String unit,
-        @Default(const <String>[]) List<String> assets,
+        @Default(const {}) Map<String, int> assets,
         @Default(const []) List<dynamic> transactions,
-        String currentAsset), {
+        int currentAsset), {
     Result SendSheetState(
         BaseState base,
         int balance,
         String unit,
-        List<String> assets,
+        Map<String, int> assets,
         List<dynamic> transactions,
-        String currentAsset,
+        int currentAsset,
         int destAmount,
         String destAddress),
     Result MantaSheetState(
         BaseState base,
         int balance,
         String unit,
-        List<String> assets,
+        Map<String, int> assets,
         List<dynamic> transactions,
-        String currentAsset,
+        int currentAsset,
         Merchant merchant,
         Destination destination),
     @required Result orElse(),
@@ -837,9 +837,9 @@ abstract class AppHomeMantaSheet implements AppHome {
       {BaseState base,
       int balance,
       String unit,
-      List<String> assets,
+      Map<String, int> assets,
       List<dynamic> transactions,
-      String currentAsset,
+      int currentAsset,
       Merchant merchant,
       Destination destination}) = _$AppHomeMantaSheet;
 
@@ -850,11 +850,11 @@ abstract class AppHomeMantaSheet implements AppHome {
   @override
   String get unit;
   @override
-  List<String> get assets;
+  Map<String, int> get assets;
   @override
   List<dynamic> get transactions;
   @override
-  String get currentAsset;
+  int get currentAsset;
   Merchant get merchant;
   Destination get destination;
 
@@ -863,9 +863,9 @@ abstract class AppHomeMantaSheet implements AppHome {
       {BaseState base,
       int balance,
       String unit,
-      List<String> assets,
+      Map<String, int> assets,
       List<dynamic> transactions,
-      String currentAsset,
+      int currentAsset,
       Merchant merchant,
       Destination destination});
 }
@@ -1081,4 +1081,53 @@ abstract class _AppImportSeed implements AppImportSeed {
 
   @override
   _AppImportSeed copyWith({BaseState base, AppState pstate, String address});
+}
+
+mixin _$AppAccountSetup {
+  BaseState get base;
+
+  AppAccountSetup copyWith({BaseState base});
+}
+
+class _$_AppAccountSetup implements _AppAccountSetup {
+  _$_AppAccountSetup({this.base});
+
+  @override
+  final BaseState base;
+
+  @override
+  String toString() {
+    return 'AppAccountSetup(base: $base)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is _AppAccountSetup &&
+            (identical(other.base, base) ||
+                const DeepCollectionEquality().equals(other.base, base)));
+  }
+
+  @override
+  int get hashCode =>
+      runtimeType.hashCode ^ const DeepCollectionEquality().hash(base);
+
+  @override
+  _$_AppAccountSetup copyWith({
+    Object base = freezed,
+  }) {
+    return _$_AppAccountSetup(
+      base: base == freezed ? this.base : base as BaseState,
+    );
+  }
+}
+
+abstract class _AppAccountSetup implements AppAccountSetup {
+  factory _AppAccountSetup({BaseState base}) = _$_AppAccountSetup;
+
+  @override
+  BaseState get base;
+
+  @override
+  _AppAccountSetup copyWith({BaseState base});
 }

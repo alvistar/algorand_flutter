@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:algorand_flutter/ui/account_setup.dart';
 import 'package:algorand_flutter/ui/import_seed.dart';
 import 'package:algorand_flutter/ui/settings.dart';
 import 'package:algorand_flutter/ui/show_seed.dart';
@@ -36,6 +37,7 @@ class SimpleBlocDelegate extends BlocDelegate {
   void onError(Bloc bloc, Object error, StackTrace stacktrace) {
     super.onError(bloc, error, stacktrace);
     logger.severe(error);
+    logger.severe(stacktrace);
   }
 }
 
@@ -85,6 +87,10 @@ class AppPage extends StatelessWidget {
           };
           if (state is AppSettings) {
             return Settings();
+          };
+
+          if (state is AppAccountSetup) {
+            return AccountSetup();
           }
           throw UnimplementedError();
     });

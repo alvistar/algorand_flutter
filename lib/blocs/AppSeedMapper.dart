@@ -8,7 +8,7 @@ class AppSeedMapper with Mapper {
   Stream<AppState> mapAppSeedToState(AppEvent event, AppSeed state) async* {
     if (event is AppForward) {
       yield AppHomeInitial(
-          base: BaseState(account: state.base.account), currentAsset: 'algo');
+          base: BaseState(account: state.base.account), currentAsset: -1);
     } else if (event is AppBack) {
       yield state.pstate;
     }

@@ -11,8 +11,9 @@ List<String> getAssets(algod.Account account) {
 }
 
 int getBalanceForAssetIndex({algod.Account account, int asset}) {
-  final m = account.assets.asMap;
-  return (m[asset.toString()]['amount']);
+  // final m = account.assets.asMap;
+  //return (m[asset.toString()]['amount']);
+  return account.assets[asset.toString()].amount;
 }
 
 int getAssetIndex({algod.Account account, String asset}) {
@@ -21,17 +22,17 @@ int getAssetIndex({algod.Account account, String asset}) {
   return int.parse(key);
 }
 
-int getBalance({algod.Account account,String asset}) {
+int getBalance({algod.Account account, int asset}) {
 
   if (account == null) {
     return 0;
   }
 
-  if (asset == 'algo') {
+  if (asset == -1) {
     return account.amount;
   }
 
   return getBalanceForAssetIndex(
       account: account,
-      asset: getAssetIndex(account: account, asset: asset));
+      asset: asset);
 }

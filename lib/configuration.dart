@@ -1,3 +1,4 @@
+import 'package:dart_algorand/dart_algorand.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Configuration {
@@ -7,11 +8,25 @@ class Configuration {
     prefs = await SharedPreferences.getInstance();
   }
 
-  String get key {
-    return prefs.getString('prova');
+  set account (AlgoAccount account) {
+    prefs.setString('private_key', account.private_key);
   }
 
- set key (value ){
-    prefs.setString('prova', 'myprova');
+  AlgoAccount get account {
+    final private_key = prefs.getString(('private_key'));
+
+    if (private_key == null) {
+      return null;
+    }
+
+    return AlgoAccount(
+      private_key: private_key,
+      address: address_from_private_key(private_key)
+    );
   }
+
+  reset_account() {
+    prefs.setString(('private_key'), null);
+  }
+
 }

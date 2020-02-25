@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:algo_explorer_api/algo_explorer_api.dart';
+import 'package:algorand_flutter/algo_repository.dart';
 import 'package:algorand_flutter/blocs/AppImportSeedMapper.dart';
 import 'package:algorand_flutter/blocs/AppSeedMapper.dart';
 import 'package:algorand_flutter/blocs/utils.dart';
-import 'package:algorand_flutter/ui/import_seed.dart';
 import 'package:bloc/bloc.dart';
 import 'package:dart_algorand/algod.dart' as algod;
 import 'package:dart_algorand/dart_algorand.dart';
@@ -14,6 +15,7 @@ import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 
 import '../configuration.dart';
+import 'AppAccountSetupMapper.dart';
 import 'AppHomeMantaSheetMapper.dart';
 import 'AppHomeSendSheetMapper.dart';
 import 'AppSettingsMapper.dart';
@@ -32,48 +34,51 @@ class AppBloc extends Bloc<AppEvent, AppState>
         AppHomeMantaSheetMapper,
         AppSettingsMapper,
         AppImportSeedMapper,
-        AppSeedMapper {
-  AccountApi accountApi;
-  algod.AlgodApi client;
+        AppSeedMapper,
+        AppAccountSetupMapper {
   Timer accountTimer;
   MantaWallet mantaWallet;
   Configuration configuration;
+  AppBloc appBloc;
+  AlgoRepository repository = AlgoRepository();
 
   AppBloc({@required this.configuration}) : super();
 
   @override
   AppState get initialState {
-    client = init_client();
-    accountApi = ExplorerApi().getAccountApi();
-    print(configuration.key);
-    configuration.key = '123';
-    return initHome();
+    appBloc = this;
+
+    final account = configuration.account;
+
+    if (account == null) {
+      return AppAccountSetup(base: BaseState());
+    }
+
+    return initHome(account);
+
+    //return initHome();
 
     //return ShowSeedState(address: account.address, privateKey: account.private_key);
     //return SettingsState(address: 'my_address');
     //return ImportSeedState();
+    // return AppAccountSetup(base: BaseState());
   }
 
-  initHome() {
-    getAccountInformation();
+  initHome(AlgoAccount account) {
+    getAccountInformation(account.address);
     startTimer();
 
     return AppHome(
-        base: BaseState(account: generate_account()),
+        base: BaseState(account: account),
         transactions: [],
-        currentAsset: 'algo');
+        currentAsset: -1);
   }
 
   @override
   Stream<AppState> mapEventToState(AppEvent event) async* {
-    // Global
-    if (event is AppAccountInformationGet) {
-      getAccountInformation();
-    }
-
     // Events handled by mappers
 
-    else if (state is AppHomeInitial) {
+    if (state is AppHomeInitial) {
       yield* mapAppHomeInitialToState(event, state);
     } else if (state is AppHomeSendSheet) {
       yield* mapAppHomeSendSheetToState(event, state);
@@ -85,6 +90,8 @@ class AppBloc extends Bloc<AppEvent, AppState>
       yield* mapAppImportSeedToState(event, state);
     } else if (state is AppSeed) {
       yield* mapAppSeedToState(event, state);
+    } else if (state is AppAccountSetup) {
+      yield* mapAppAccountSetupToState(event, state);
     } else {
       throw UnimplementedError('Appbloc was unable to map $event');
     }
@@ -99,36 +106,20 @@ class AppBloc extends Bloc<AppEvent, AppState>
     }
   }
 
-  getAccountInformation() async {
-    logger.fine('Updating account');
-    final address =
-        'BICEALPAAJT3VMBTPNE6U44HAJGZKMUZQMYWVEOCGMNDVKQOTRU7OUXAZU';
-    client
-        .accountInformation(address)
-        .then((result) => this.add(AppAccountInfoUpdate(result.data)));
+  getAccountInformation(String address) async {
+    logger.fine('Updating account $address');
+    final accountInfo = await repository.getAccountInformation(address);
+    add(AppAccountInfoUpdate(accountInfo));
 
-    try {
-      final latest = await accountApi.accountsGetLatestByIndex(address, 5);
-      this.add(AppTransactionsUpdate(latest.data));
-    } on DioError catch (e) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx and is also not 304.
-      if (e.response != null) {
-        print(e.response.data);
-        print(e.response.headers);
-        print(e.response.request);
-      } else {
-        // Something happened in setting up or sending the request that triggered an Error
-        print(e.request);
-        print(e.message);
-      }
-    }
+    final latest = await repository.getLatestTransactionsByIndex(
+        address: address, limit: 5);
+    this.add(AppTransactionsUpdate(latest));
   }
 
   sendTransaction({int amount, String destination, String note}) async {
     // Get params for transactions
 
-    final params = (await client.transactionParams()).data;
+    final params = await repository.getTransactionParams();
 
     final txn = PaymentTxn(
         sender: "BICEALPAAJT3VMBTPNE6U44HAJGZKMUZQMYWVEOCGMNDVKQOTRU7OUXAZU",
@@ -152,7 +143,7 @@ class AppBloc extends Bloc<AppEvent, AppState>
 
     final rawtxn = base64Decode(msgpack_encode(st));
 
-    final result = await client.rawTransaction(rawtxn);
+    final result = await repository.sendRawTransaction(rawtxn);
 
     logger.info(result);
   }
@@ -161,7 +152,7 @@ class AppBloc extends Bloc<AppEvent, AppState>
       {int amount, String destination, String note, int index}) async {
     // Get params for transactions
 
-    final params = (await client.transactionParams()).data;
+    final params = await repository.getTransactionParams();
 
     final atxn = AssetTransferTxn(
         sender: "BICEALPAAJT3VMBTPNE6U44HAJGZKMUZQMYWVEOCGMNDVKQOTRU7OUXAZU",
@@ -186,7 +177,7 @@ class AppBloc extends Bloc<AppEvent, AppState>
 
     final rawtxn = base64Decode(msgpack_encode(st));
 
-    final result = await client.rawTransaction(rawtxn);
+    final result = await repository.sendRawTransaction(rawtxn);
 
     logger.info(result);
   }
@@ -194,7 +185,7 @@ class AppBloc extends Bloc<AppEvent, AppState>
   startTimer() {
     logger.fine('Starting account timer');
     accountTimer = Timer.periodic(const Duration(seconds: 5), (_) {
-      getAccountInformation();
+      getAccountInformation(state.base.account.address);
     });
   }
 
@@ -205,6 +196,12 @@ class AppBloc extends Bloc<AppEvent, AppState>
 
   @override
   void onTransition(Transition<AppEvent, AppState> transition) {
+    // Save changes in preferences
+    if (transition.nextState.base.account?.private_key !=
+        transition.currentState.base.account?.private_key) {
+      configuration.account = transition.nextState.base.account;
+    }
+
     // On enter InitialAppState
     if (transition.nextState is AppHomeInitial &&
         !(transition.currentState is AppHomeInitial)) {
@@ -212,7 +209,7 @@ class AppBloc extends Bloc<AppEvent, AppState>
 
       // Refresh accountinfo if we changed account
       if (transition.currentState is AppSeed) {
-        getAccountInformation();
+        getAccountInformation(transition.nextState.base.account.address);
       }
     }
 
@@ -229,7 +226,7 @@ class AppBloc extends Bloc<AppEvent, AppState>
     final note = mantaWallet == null ? null : mantaWallet.session_id;
     final currentAsset = (state as AppHome).currentAsset;
 
-    if (currentAsset == 'algo') {
+    if (currentAsset == -1) {
       sendTransaction(
           destination: event.destination, amount: event.amount, note: note);
     } else {
@@ -237,38 +234,9 @@ class AppBloc extends Bloc<AppEvent, AppState>
           destination: event.destination,
           amount: event.amount,
           note: note,
-          index: getAssetIndex(
-              account: state.base.accountInfo, asset: currentAsset));
+          index: currentAsset);
     }
 
     yield (state as AppHome).toInitialState();
   }
-}
-
-algod.AlgodApi init_client() {
-  final options = BaseOptions(
-    baseUrl: 'http://algorand-testnet.beappia.com',
-    connectTimeout: 5000,
-    receiveTimeout: 3000,
-  );
-
-  final dio = Dio(options);
-  dio.interceptors.add(InterceptorsWrapper(onRequest: (Options options) {
-    options.headers['X-Algo-API-Token'] =
-        'b5985ac6e3b5203003b4af1466d799055101fad921c89b9ba004c3dd409d4b22';
-  }, onError: (DioError e) {
-    if (e.response != null) {
-      print(e.response.data);
-      print(e.response.headers);
-      print(e.response.request);
-    } else {
-      // Something happened in setting up or sending the request that triggered an Error
-      print(e.request);
-      print(e.message);
-    }
-
-    return e;
-  }));
-
-  return algod.Openapi(dio: dio).getAlgodApi();
 }

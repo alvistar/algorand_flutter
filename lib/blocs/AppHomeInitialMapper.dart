@@ -18,9 +18,7 @@ class AppHomeInitialMapper with Mapper {
       yield state.copyWith(transactions: event.transactions);
     } else if (event is AppSettingsShow) {
       yield AppSettings(base: state.base, pstate: state);
-    }
-
-    else if (event is AppSendSheetShow) {
+    } else if (event is AppSendSheetShow) {
       yield state.toSendSheet();
     } else {
       throw UnimplementedError('$event not handled in $state');
@@ -29,13 +27,21 @@ class AppHomeInitialMapper with Mapper {
 
   Stream<AppState> _mapAccountInfoUpdateToState(
       AppAccountInfoUpdate event, AppHomeInitial state) async* {
-    final assets = <String>['algo'];
-    assets.addAll(getAssets(event.account));
+    final assets = {'algo': -1};
+
+    for (String index in event.account.assets.keys) {
+      final assetInfo =
+          await this.appBloc.repository.getAssetInformation(int.parse(index));
+      assets[assetInfo.unitname] = int.parse(index);
+    }
+
+    // assets.addAll(getAssets(event.account));
     final newBase = state.base.copyWith(accountInfo: event.account);
 
     yield state.copyWith(
         base: newBase,
-        balance: getBalance(asset: state.currentAsset, account: event.account),
+        balance: getBalance(
+            asset: state.currentAsset, account: event.account),
         assets: assets);
   }
 }

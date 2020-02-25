@@ -71,7 +71,7 @@ class AppQRScan extends AppEvent {
 }
 
 class AppAssetChanged extends AppEvent {
-  final String asset;
+  final int asset;
 
   AppAssetChanged(this.asset);
 
@@ -114,7 +114,17 @@ class AppForward extends AppEvent {
   List<Object> get props => [];
 }
 
+class AppSeedGenerate extends AppEvent {
+  @override
+  List<Object> get props => [];
+}
+
 class AppAccountInformationGet extends AppEvent {
+  @override
+  List<Object> get props => [];
+}
+
+class AppSeedReset extends AppEvent {
   @override
   List<Object> get props => [];
 }

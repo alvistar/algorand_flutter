@@ -21,17 +21,17 @@ abstract class AppHome with _$AppHome implements AppState {
       {BaseState base,
       int balance,
       String unit,
-      @Default(const <String>[]) List<String> assets,
+      @Default(const  {}) Map<String, int>  assets,
       @Default(const []) List transactions,
-      String currentAsset}) = AppHomeInitial;
+      int currentAsset}) = AppHomeInitial;
 
   factory AppHome.SendSheetState(
       {BaseState base,
       int balance,
       String unit,
-      List<String> assets,
+      Map<String, int> assets,
       List transactions,
-      String currentAsset,
+      int currentAsset,
       int destAmount,
       String destAddress}) = AppHomeSendSheet;
 
@@ -39,9 +39,9 @@ abstract class AppHome with _$AppHome implements AppState {
       {BaseState base,
       int balance,
       String unit,
-      List<String> assets,
+      Map<String, int>  assets,
       List transactions,
-      String currentAsset,
+      int currentAsset,
       Merchant merchant,
       Destination destination}) = AppHomeMantaSheet;
 }
@@ -105,4 +105,9 @@ abstract class AppImportSeed
     implements AppState, Backable {
   factory AppImportSeed({BaseState base, AppState pstate, String address}) =
       _AppImportSeed;
+}
+
+@freezed
+abstract class AppAccountSetup with _$AppAccountSetup implements AppState {
+  factory AppAccountSetup({BaseState base}) = _AppAccountSetup;
 }

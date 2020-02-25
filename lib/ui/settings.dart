@@ -14,7 +14,7 @@ class Settings extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white,),
+            icon: Icon(Icons.arrow_back),
             onPressed: () { appBloc.add(AppBack());},
           ),
             title: Text('Settings')),
@@ -26,6 +26,7 @@ class Settings extends StatelessWidget {
                   ListTile(
                     title: Text(s.base.account.address),
                     subtitle: Text('Address'),
+                    onTap: () => appBloc.add(AppSeedShow()),
                   ),
                   Divider(),
                   ListTile(

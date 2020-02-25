@@ -5,6 +5,7 @@ import 'package:algo_explorer_api/algo_explorer_api.dart';
 import 'package:algorand_flutter/blocs/AppImportSeedMapper.dart';
 import 'package:algorand_flutter/blocs/AppSeedMapper.dart';
 import 'package:algorand_flutter/blocs/utils.dart';
+import 'package:algorand_flutter/ui/import_seed.dart';
 import 'package:bloc/bloc.dart';
 import 'package:dart_algorand/algod.dart' as algod;
 import 'package:dart_algorand/dart_algorand.dart';
@@ -65,7 +66,14 @@ class AppBloc extends Bloc<AppEvent, AppState>
 
   @override
   Stream<AppState> mapEventToState(AppEvent event) async* {
-    if (state is AppHomeInitial) {
+    // Global
+    if (event is AppAccountInformationGet) {
+      getAccountInformation();
+    }
+
+    // Events handled by mappers
+
+    else if (state is AppHomeInitial) {
       yield* mapAppHomeInitialToState(event, state);
     } else if (state is AppHomeSendSheet) {
       yield* mapAppHomeSendSheetToState(event, state);
@@ -201,6 +209,11 @@ class AppBloc extends Bloc<AppEvent, AppState>
     if (transition.nextState is AppHomeInitial &&
         !(transition.currentState is AppHomeInitial)) {
       startTimer();
+
+      // Refresh accountinfo if we changed account
+      if (transition.currentState is AppSeed) {
+        getAccountInformation();
+      }
     }
 
     // On exit InitialAppState

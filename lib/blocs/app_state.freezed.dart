@@ -873,21 +873,29 @@ abstract class AppHomeMantaSheet implements AppHome {
 mixin _$AppSeed {
   BaseState get base;
   AppState get pstate;
+  @Default(false)
+  bool get forwardable;
 
-  AppSeed copyWith({BaseState base, AppState pstate});
+  AppSeed copyWith(
+      {BaseState base, AppState pstate, @Default(false) bool forwardable});
 }
 
 class _$_AppSeed implements _AppSeed {
-  _$_AppSeed({this.base, this.pstate});
+  _$_AppSeed(
+      {this.base, this.pstate, @Default(false) this.forwardable = false});
 
   @override
   final BaseState base;
   @override
   final AppState pstate;
+  @JsonKey(defaultValue: false)
+  @override
+  @Default(false)
+  final bool forwardable;
 
   @override
   String toString() {
-    return 'AppSeed(base: $base, pstate: $pstate)';
+    return 'AppSeed(base: $base, pstate: $pstate, forwardable: $forwardable)';
   }
 
   @override
@@ -897,37 +905,51 @@ class _$_AppSeed implements _AppSeed {
             (identical(other.base, base) ||
                 const DeepCollectionEquality().equals(other.base, base)) &&
             (identical(other.pstate, pstate) ||
-                const DeepCollectionEquality().equals(other.pstate, pstate)));
+                const DeepCollectionEquality().equals(other.pstate, pstate)) &&
+            (identical(other.forwardable, forwardable) ||
+                const DeepCollectionEquality()
+                    .equals(other.forwardable, forwardable)));
   }
 
   @override
   int get hashCode =>
       runtimeType.hashCode ^
       const DeepCollectionEquality().hash(base) ^
-      const DeepCollectionEquality().hash(pstate);
+      const DeepCollectionEquality().hash(pstate) ^
+      const DeepCollectionEquality().hash(forwardable);
 
   @override
   _$_AppSeed copyWith({
     Object base = freezed,
     Object pstate = freezed,
+    Object forwardable = freezed,
   }) {
     return _$_AppSeed(
       base: base == freezed ? this.base : base as BaseState,
       pstate: pstate == freezed ? this.pstate : pstate as AppState,
+      forwardable:
+          forwardable == freezed ? this.forwardable : forwardable as bool,
     );
   }
 }
 
 abstract class _AppSeed implements AppSeed {
-  factory _AppSeed({BaseState base, AppState pstate}) = _$_AppSeed;
+  factory _AppSeed(
+      {BaseState base,
+      AppState pstate,
+      @Default(false) bool forwardable}) = _$_AppSeed;
 
   @override
   BaseState get base;
   @override
   AppState get pstate;
+  @override
+  @Default(false)
+  bool get forwardable;
 
   @override
-  _AppSeed copyWith({BaseState base, AppState pstate});
+  _AppSeed copyWith(
+      {BaseState base, AppState pstate, @Default(false) bool forwardable});
 }
 
 mixin _$AppSettings {

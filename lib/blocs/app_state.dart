@@ -90,7 +90,7 @@ abstract class Backable {
 @freezed
 abstract class AppSeed with _$AppSeed implements AppState, Backable {
   factory AppSeed(
-      {BaseState base, AppState pstate}) = _AppSeed;
+      {BaseState base, AppState pstate, @Default(false) bool forwardable}) = _AppSeed;
 }
 
 @freezed

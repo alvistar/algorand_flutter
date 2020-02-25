@@ -12,7 +12,13 @@ class ShowSeed extends StatelessWidget {
     final s = appBloc.state as AppSeed;
 
     return Scaffold(
-        appBar: AppBar(title: Text('Account Seed')),
+        appBar: AppBar(
+            title: Text('Account Seed'),
+            leading: IconButton(
+                icon: Icon(Icons.arrow_back),
+                onPressed: () {
+                  appBloc.add(AppBack());
+                })),
         body: Column(
           children: <Widget>[
             TextFormField(
@@ -26,6 +32,7 @@ class ShowSeed extends StatelessWidget {
                 maxLines: null,
                 initialValue: s.base.account.private_key,
                 decoration: InputDecoration(labelText: 'Private Key')),
+            ! s.forwardable ? SizedBox.shrink() :
             RaisedButton(
               child: Text('OKAY'),
               onPressed: () => appBloc.add(AppForward()),

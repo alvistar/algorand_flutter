@@ -11,6 +11,8 @@ class AppSettingsMapper with Mapper {
       yield state.pstate;
     } else if (event is AppImportSeedShow) {
       yield AppImportSeed(base:state.base, pstate: state);
+    } else if (event is AppSeedShow) {
+      yield AppSeed(base: state.base, pstate: state);
     }
     else {
       throw UnimplementedError('$event not handled in $state');

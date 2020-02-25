@@ -9,7 +9,10 @@ class AppSeedMapper with Mapper {
     if (event is AppForward) {
       yield AppHomeInitial(
           base: BaseState(account: state.base.account), currentAsset: 'algo');
-    } else {
+    } else if (event is AppBack) {
+      yield state.pstate;
+    }
+    else {
       throw UnimplementedError('$event not handled in $state');
     }
   }

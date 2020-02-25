@@ -90,6 +90,11 @@ class AppSettingsShow extends AppEvent {
   List<Object> get props => [];
 }
 
+class AppSeedShow extends AppEvent {
+  @override
+  List<Object> get props => [];
+}
+
 class AppSeedImported extends AppEvent {
   final String seed;
 
@@ -105,6 +110,11 @@ class AppBack extends AppEvent {
 }
 
 class AppForward extends AppEvent {
+  @override
+  List<Object> get props => [];
+}
+
+class AppAccountInformationGet extends AppEvent {
   @override
   List<Object> get props => [];
 }

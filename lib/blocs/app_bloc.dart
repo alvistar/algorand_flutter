@@ -9,6 +9,7 @@ import 'package:algorand_flutter/blocs/AppSeedMapper.dart';
 import 'package:algorand_flutter/blocs/utils.dart';
 import 'package:bloc/bloc.dart';
 import 'package:dart_algorand/algod.dart' as algod;
+import 'package:dart_algorand/algod/model/account.dart';
 import 'package:dart_algorand/dart_algorand.dart';
 import 'package:manta_dart/manta_wallet.dart';
 import 'package:logging/logging.dart';
@@ -41,7 +42,8 @@ class AppBloc extends Bloc<AppEvent, AppState>
   AppBloc appBloc;
   AlgoRepository repository = AlgoRepository();
   Completer<void> updating;
-  StreamSubscription<List> subscription;
+  StreamSubscription<List> txSubscription;
+  StreamSubscription<Account> accountSubscription;
 
   AppBloc({@required this.configuration}) : super();
 
@@ -65,17 +67,23 @@ class AppBloc extends Bloc<AppEvent, AppState>
     // return AppAccountSetup(base: BaseState());
   }
 
-  initHome(AlgoAccount account) {
-    getAccountInformation(account.address, -1);
-    startTimer();
-
-    subscription = repository
-        .getTransactionStream(
-        address: account.address,
-        asset: -1)
+  subscribeTX({String address, int asset}) {
+    txSubscription = repository
+        .getTransactionStream(address: address, asset: asset)
         .listen((event) {
       add(AppTransactionsUpdated(event));
     });
+  }
+
+  subscribeAccount(address) {
+    accountSubscription = repository.getAccountStream(address).listen((event) {
+      add(AppAccountInfoUpdated(event));
+    });
+  }
+
+  initHome(AlgoAccount account) {
+    subscribeTX(address: account.address, asset: -1);
+    subscribeAccount(account.address);
 
     return AppHome(
         base: BaseState(account: account), transactions: [], currentAsset: -1);
@@ -111,16 +119,6 @@ class AppBloc extends Bloc<AppEvent, AppState>
     } else {
       throw UnimplementedError('Appbloc (global) was unable to map $event');
     }
-  }
-
-  getAccountInformation(String address, int asset) async {
-    logger.fine('Updating account $address');
-    final accountInfo = await repository.getAccountInformation(address);
-    add(AppAccountInfoUpdated(accountInfo));
-
-//    final latest = await repository.getLatestAssetTransactionsByIndex(
-//        address: address, limit: 5, asset: asset);
-//    this.add(AppTransactionsUpdated(latest));
   }
 
   sendTransaction({int amount, String destination, String note}) async {
@@ -186,19 +184,6 @@ class AppBloc extends Bloc<AppEvent, AppState>
     logger.info(result);
   }
 
-  startTimer() {
-    logger.fine('Starting account timer');
-    accountTimer = Timer.periodic(const Duration(seconds: 5), (_) {
-      final s = state as AppHomeInitial;
-      getAccountInformation(s.base.account.address, s.currentAsset);
-    });
-  }
-
-  stopTimer() {
-    logger.fine('Stopping account timer');
-    accountTimer.cancel();
-  }
-
   @override
   void onTransition(Transition<AppEvent, AppState> transition) {
     // Save changes in preferences
@@ -210,26 +195,20 @@ class AppBloc extends Bloc<AppEvent, AppState>
     // On enter InitialAppState
     if (transition.nextState is AppHomeInitial &&
         !(transition.currentState is AppHomeInitial)) {
+      
+      subscribeTX(
+          address: transition.nextState.base.account.address,
+          asset: (transition.nextState as AppHomeInitial).currentAsset);
 
+      subscribeAccount(transition.nextState.base.account.address);
 
-      startTimer();
-      subscription = repository.getTransactionStream(
-        address: transition.nextState.base.account.address,
-        asset: (transition.nextState as AppHomeInitial).currentAsset).listen((event) {
-        add(AppTransactionsUpdated(event));
-      });
-
-      // Refresh accountinfo if we changed account
-      if (transition.currentState is AppSeed) {
-        getAccountInformation(transition.nextState.base.account.address, -1);
-      }
     }
 
     // On exit InitialAppState
     if (transition.currentState is AppHomeInitial &&
         !(transition.nextState is AppHomeInitial)) {
-      stopTimer();
-      subscription.cancel();
+      txSubscription.cancel();
+      accountSubscription.cancel();
     }
 
     super.onTransition(transition);

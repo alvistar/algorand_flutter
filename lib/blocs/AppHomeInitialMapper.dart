@@ -12,15 +12,12 @@ class AppHomeInitialMapper with Mapper {
     } else if (event is AppAssetChanged) {
       final asset = event.asset;
 
-      await appBloc.subscription.cancel();
+      await this.appBloc.txSubscription.cancel();
 
-      appBloc.subscription = appBloc.repository
-          .getTransactionStream(
-          address: state.base.account.address,
-          asset: event.asset)
-          .listen((event) {
-        appBloc.add(AppTransactionsUpdated(event));
-      });
+      appBloc.subscribeTX(
+        address: state.base.account.address,
+        asset: event.asset
+      );
 
       yield state.copyWith(
           balance: getBalance(asset: asset, account: state.base.accountInfo),

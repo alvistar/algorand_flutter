@@ -114,10 +114,10 @@ class HomePage extends StatelessWidget {
               )),
             ),
             Expanded(
-                child:
-                    transactionList(
-                        address: appBloc.state.base.account.address,
-                        transactions:(appBloc.state as AppHome).transactions)),
+                child: transactionList(
+                    onRefresh: () => appBloc.addAsync(AppTransactionsUpdate()),
+                    address: appBloc.state.base.account.address,
+                    transactions: (appBloc.state as AppHome).transactions)),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: RaisedButton(
@@ -151,7 +151,8 @@ assetDropdown(
       onChanged: onChanged);
 }
 
-transactionList({List transactions, String address}) {
+transactionList(
+    {List transactions, String address, Future<void> Function() onRefresh}) {
   final pts = transactions.whereType<TransactionPay>();
   final apts = transactions.whereType<TransactionAssetTransfer>();
 //  final listIter = pts.map((entry) => ListTile(
@@ -168,9 +169,11 @@ transactionList({List transactions, String address}) {
   final entries = listIter.toList();
   entries.addAll(aListIter);
 
-  return ListView(
-    children: entries,
-  );
+  return RefreshIndicator(
+      onRefresh: onRefresh,
+      child: ListView(
+        children: entries,
+      ));
 }
 
 Widget transactionEntry({String destination, int amount, bool sent}) {

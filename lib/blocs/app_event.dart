@@ -7,22 +7,27 @@ abstract class AppEvent extends Equatable {
 //  bool get stringify => true;
 }
 
-class AppAccountInfoUpdate extends AppEvent {
+class AppAccountInfoUpdated extends AppEvent {
   final algod.Account account;
 
-  AppAccountInfoUpdate(this.account);
+  AppAccountInfoUpdated(this.account);
 
   @override
   List<Object> get props => [account];
 }
 
-class AppTransactionsUpdate extends AppEvent {
+class AppTransactionsUpdated extends AppEvent {
   final List transactions;
 
-  AppTransactionsUpdate(this.transactions);
+  AppTransactionsUpdated(this.transactions);
 
   @override
   List<Object> get props => [transactions];
+}
+
+class AppTransactionsUpdate extends AppEvent {
+  @override
+  List<Object> get props => [];
 }
 
 class AppSendSheetShow extends AppEvent {

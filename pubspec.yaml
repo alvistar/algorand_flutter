@@ -26,6 +26,7 @@ dependencies:
   flutter_barcode_scanner: ^0.1.7
   freezed_annotation: ^0.7.0
   shared_preferences: ^0.5.6
+  rxdart: ^0.23.1
 
   manta_dart:
     git: git://github.com/appiapay/manta-dart.git

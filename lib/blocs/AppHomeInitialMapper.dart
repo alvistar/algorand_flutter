@@ -7,26 +7,40 @@ import 'mapper.dart';
 class AppHomeInitialMapper with Mapper {
   Stream<AppState> mapAppHomeInitialToState(
       AppEvent event, AppHomeInitial state) async* {
-    if (event is AppAccountInfoUpdate) {
+    if (event is AppAccountInfoUpdated) {
       yield* _mapAccountInfoUpdateToState(event, state);
     } else if (event is AppAssetChanged) {
       final asset = event.asset;
+
+      await appBloc.subscription.cancel();
+
+      appBloc.subscription = appBloc.repository
+          .getTransactionStream(
+          address: state.base.account.address,
+          asset: event.asset)
+          .listen((event) {
+        appBloc.add(AppTransactionsUpdated(event));
+      });
+
       yield state.copyWith(
           balance: getBalance(asset: asset, account: state.base.accountInfo),
           currentAsset: asset);
-    } else if (event is AppTransactionsUpdate) {
+    } else if (event is AppTransactionsUpdated) {
       yield state.copyWith(transactions: event.transactions);
     } else if (event is AppSettingsShow) {
       yield AppSettings(base: state.base, pstate: state);
     } else if (event is AppSendSheetShow) {
       yield state.toSendSheet();
-    } else {
+    } else if (event is AppTransactionsUpdate) {
+      this.appBloc.updating.complete();
+    }
+    else {
       throw UnimplementedError('$event not handled in $state');
     }
   }
 
   Stream<AppState> _mapAccountInfoUpdateToState(
-      AppAccountInfoUpdate event, AppHomeInitial state) async* {
+      AppAccountInfoUpdated event, AppHomeInitial state) async* {
     final assets = {'algo': -1};
 
     for (String index in event.account.assets.keys) {

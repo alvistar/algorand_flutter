@@ -21,7 +21,6 @@ import 'AppHomeSendSheetMapper.dart';
 import 'AppSettingsMapper.dart';
 import 'app_event.dart';
 import 'app_state.dart';
-import 'package:dio/dio.dart';
 
 import 'AppHomeInitialMapper.dart';
 
@@ -41,6 +40,8 @@ class AppBloc extends Bloc<AppEvent, AppState>
   Configuration configuration;
   AppBloc appBloc;
   AlgoRepository repository = AlgoRepository();
+  Completer<void> updating;
+  StreamSubscription<List> subscription;
 
   AppBloc({@required this.configuration}) : super();
 
@@ -68,10 +69,16 @@ class AppBloc extends Bloc<AppEvent, AppState>
     getAccountInformation(account.address, -1);
     startTimer();
 
+    subscription = repository
+        .getTransactionStream(
+        address: account.address,
+        asset: -1)
+        .listen((event) {
+      add(AppTransactionsUpdated(event));
+    });
+
     return AppHome(
-        base: BaseState(account: account),
-        transactions: [],
-        currentAsset: -1);
+        base: BaseState(account: account), transactions: [], currentAsset: -1);
   }
 
   @override
@@ -109,11 +116,11 @@ class AppBloc extends Bloc<AppEvent, AppState>
   getAccountInformation(String address, int asset) async {
     logger.fine('Updating account $address');
     final accountInfo = await repository.getAccountInformation(address);
-    add(AppAccountInfoUpdate(accountInfo));
+    add(AppAccountInfoUpdated(accountInfo));
 
-    final latest = await repository.getLatestAssetTransactionsByIndex(
-        address: address, limit: 5, asset: asset);
-    this.add(AppTransactionsUpdate(latest));
+//    final latest = await repository.getLatestAssetTransactionsByIndex(
+//        address: address, limit: 5, asset: asset);
+//    this.add(AppTransactionsUpdated(latest));
   }
 
   sendTransaction({int amount, String destination, String note}) async {
@@ -122,7 +129,7 @@ class AppBloc extends Bloc<AppEvent, AppState>
     final params = await repository.getTransactionParams();
 
     final txn = PaymentTxn(
-        sender: "BICEALPAAJT3VMBTPNE6U44HAJGZKMUZQMYWVEOCGMNDVKQOTRU7OUXAZU",
+        sender: state.base.account.address,
         receiver: destination,
         fee: params.minFee,
         note: note != null ? utf8.encode(note) : null,
@@ -132,8 +139,7 @@ class AppBloc extends Bloc<AppEvent, AppState>
         genesis_id: params.genesisID,
         genesis_hash: params.genesishashb64);
 
-    const PRIV_KEY =
-        "ME81aVXutEYkMKdNjKHKaspLGH9+d2zQdTX8WbVazXwKBEAt4AJnurAze0nqc4cCTZUymYMxapHCMxo6qg6caQ==";
+    final PRIV_KEY = state.base.account.private_key;
 
     // Sign transaction
 
@@ -155,7 +161,7 @@ class AppBloc extends Bloc<AppEvent, AppState>
     final params = await repository.getTransactionParams();
 
     final atxn = AssetTransferTxn(
-        sender: "BICEALPAAJT3VMBTPNE6U44HAJGZKMUZQMYWVEOCGMNDVKQOTRU7OUXAZU",
+        sender: state.base.account.address,
         index: index,
         receiver: destination,
         fee: params.minFee,
@@ -166,9 +172,7 @@ class AppBloc extends Bloc<AppEvent, AppState>
         genesis_id: params.genesisID,
         genesis_hash: params.genesishashb64);
 
-    const PRIV_KEY =
-        "ME81aVXutEYkMKdNjKHKaspLGH9+d2zQdTX8WbVazXwKBEAt4AJnurAze0nqc4cCTZUymYMxapHCMxo6qg6caQ==";
-
+    final PRIV_KEY = state.base.account.private_key;
     // Sign transaction
 
     final st = atxn.sign(PRIV_KEY);
@@ -206,14 +210,14 @@ class AppBloc extends Bloc<AppEvent, AppState>
     // On enter InitialAppState
     if (transition.nextState is AppHomeInitial &&
         !(transition.currentState is AppHomeInitial)) {
+
+
       startTimer();
+      subscription.resume();
 
       // Refresh accountinfo if we changed account
       if (transition.currentState is AppSeed) {
-        getAccountInformation(
-            transition.nextState.base.account.address,
-            -1
-        );
+        getAccountInformation(transition.nextState.base.account.address, -1);
       }
     }
 
@@ -221,6 +225,7 @@ class AppBloc extends Bloc<AppEvent, AppState>
     if (transition.currentState is AppHomeInitial &&
         !(transition.nextState is AppHomeInitial)) {
       stopTimer();
+      subscription.pause();
     }
 
     super.onTransition(transition);
@@ -242,5 +247,12 @@ class AppBloc extends Bloc<AppEvent, AppState>
     }
 
     yield (state as AppHome).toInitialState();
+  }
+
+  Future<void> addAsync(AppEvent event) {
+    updating = Completer();
+    add(event);
+
+    return updating.future;
   }
 }

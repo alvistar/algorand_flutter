@@ -26,12 +26,18 @@ class TXNewSubject {
         .distinctUnique()
         .asBroadcastStream();
     s.forEach((element) {
-      if (! _transactions.contains(element)) {
+      if (!_transactions.contains(element)) {
         _transactions.add(element);
       }
     });
-        return s;
-    }
+    return s;
+  }
+
+  _startPeriodicTimer() {
+    timer = Timer.periodic(Duration(seconds: 5), (Timer timer) {
+      _addSubject.add(null);
+    });
+  }
 
   TXNewSubject({this.address, this.asset, this.repository}) {
     final s = _addSubject.stream.asyncMap((event) {
@@ -40,28 +46,25 @@ class TXNewSubject {
           address: address, limit: 5, asset: asset);
     });
 
-    final output = addStream(s)
-        .map((event) => _transactions).distinct();
+    final output = addStream(s).map((event) => _transactions).distinct();
 
     _addSubject.add(null);
 
-    _subscription = output.listen((event) {_subject.add(event);});
+    _subscription = output.listen((event) {
+      _subject.add(event);
+    });
 
     _subject.onListen = _onListen;
-    
 
     _subject.onCancel = () async {
       print('cancelling timer');
-      await _subscription.cancel();
       timer.cancel();
-       };
+    };
   }
 
-  _onListen () {
+  _onListen() {
     print('Listening');
-    timer = Timer.periodic(Duration(seconds:5), (Timer timer) {
-      _addSubject.add(null);
-    });
+    _startPeriodicTimer();
   }
 }
 

@@ -31,7 +31,10 @@ class AppHomeInitialMapper with Mapper {
       yield AppSettings(base: state.base, pstate: state);
     } else if (event is AppSendSheetShow) {
       yield state.toSendSheet();
-    } else if (event is AppTransactionsUpdate) {
+    } else if (event is AppSendSheetDismissed) {
+     // Ignore: sheet has been already closed
+    }
+    else if (event is AppTransactionsUpdate) {
       this.appBloc.updating.complete();
     }
     else {

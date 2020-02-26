@@ -213,7 +213,11 @@ class AppBloc extends Bloc<AppEvent, AppState>
 
 
       startTimer();
-      subscription.resume();
+      subscription = repository.getTransactionStream(
+        address: transition.nextState.base.account.address,
+        asset: (transition.nextState as AppHomeInitial).currentAsset).listen((event) {
+        add(AppTransactionsUpdated(event));
+      });
 
       // Refresh accountinfo if we changed account
       if (transition.currentState is AppSeed) {
@@ -225,7 +229,7 @@ class AppBloc extends Bloc<AppEvent, AppState>
     if (transition.currentState is AppHomeInitial &&
         !(transition.nextState is AppHomeInitial)) {
       stopTimer();
-      subscription.pause();
+      subscription.cancel();
     }
 
     super.onTransition(transition);

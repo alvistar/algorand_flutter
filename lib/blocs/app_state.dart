@@ -59,7 +59,7 @@ extension Utils on AppHome {
         destAddress: destAddress);
   }
 
-  AppHomeSendSheet toMantaSheet({Merchant merchant, Destination destination}) {
+  AppHomeMantaSheet toMantaSheet({Merchant merchant, Destination destination}) {
     return AppHome.MantaSheetState(
         base: base,
         balance: balance,

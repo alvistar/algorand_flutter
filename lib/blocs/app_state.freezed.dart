@@ -97,6 +97,14 @@ mixin _$AppHome {
         @Default(const []) List<dynamic> transactions,
         int currentAsset), {
     @required
+        Result ReceiveSheetState(
+            BaseState base,
+            int balance,
+            String unit,
+            @Default(const {}) Map<String, int> assets,
+            @Default(const []) List<dynamic> transactions,
+            int currentAsset),
+    @required
         Result SendSheetState(
             BaseState base,
             int balance,
@@ -127,6 +135,13 @@ mixin _$AppHome {
         @Default(const {}) Map<String, int> assets,
         @Default(const []) List<dynamic> transactions,
         int currentAsset), {
+    Result ReceiveSheetState(
+        BaseState base,
+        int balance,
+        String unit,
+        @Default(const {}) Map<String, int> assets,
+        @Default(const []) List<dynamic> transactions,
+        int currentAsset),
     Result SendSheetState(
         BaseState base,
         int balance,
@@ -151,6 +166,7 @@ mixin _$AppHome {
   @optionalTypeArgs
   Result map<Result extends Object>(
     Result $default(AppHomeInitial value), {
+    @required Result ReceiveSheetState(AppHomeReceiveSheet value),
     @required Result SendSheetState(AppHomeSendSheet value),
     @required Result MantaSheetState(AppHomeMantaSheet value),
   });
@@ -158,6 +174,7 @@ mixin _$AppHome {
   @optionalTypeArgs
   Result maybeMap<Result extends Object>(
     Result $default(AppHomeInitial value), {
+    Result ReceiveSheetState(AppHomeReceiveSheet value),
     Result SendSheetState(AppHomeSendSheet value),
     Result MantaSheetState(AppHomeMantaSheet value),
     @required Result orElse(),
@@ -259,6 +276,14 @@ class _$AppHomeInitial implements AppHomeInitial {
         @Default(const []) List<dynamic> transactions,
         int currentAsset), {
     @required
+        Result ReceiveSheetState(
+            BaseState base,
+            int balance,
+            String unit,
+            @Default(const {}) Map<String, int> assets,
+            @Default(const []) List<dynamic> transactions,
+            int currentAsset),
+    @required
         Result SendSheetState(
             BaseState base,
             int balance,
@@ -280,6 +305,7 @@ class _$AppHomeInitial implements AppHomeInitial {
             Destination destination),
   }) {
     assert($default != null);
+    assert(ReceiveSheetState != null);
     assert(SendSheetState != null);
     assert(MantaSheetState != null);
     return $default(base, balance, unit, assets, transactions, currentAsset);
@@ -295,6 +321,13 @@ class _$AppHomeInitial implements AppHomeInitial {
         @Default(const {}) Map<String, int> assets,
         @Default(const []) List<dynamic> transactions,
         int currentAsset), {
+    Result ReceiveSheetState(
+        BaseState base,
+        int balance,
+        String unit,
+        @Default(const {}) Map<String, int> assets,
+        @Default(const []) List<dynamic> transactions,
+        int currentAsset),
     Result SendSheetState(
         BaseState base,
         int balance,
@@ -326,10 +359,12 @@ class _$AppHomeInitial implements AppHomeInitial {
   @optionalTypeArgs
   Result map<Result extends Object>(
     Result $default(AppHomeInitial value), {
+    @required Result ReceiveSheetState(AppHomeReceiveSheet value),
     @required Result SendSheetState(AppHomeSendSheet value),
     @required Result MantaSheetState(AppHomeMantaSheet value),
   }) {
     assert($default != null);
+    assert(ReceiveSheetState != null);
     assert(SendSheetState != null);
     assert(MantaSheetState != null);
     return $default(this);
@@ -339,6 +374,7 @@ class _$AppHomeInitial implements AppHomeInitial {
   @optionalTypeArgs
   Result maybeMap<Result extends Object>(
     Result $default(AppHomeInitial value), {
+    Result ReceiveSheetState(AppHomeReceiveSheet value),
     Result SendSheetState(AppHomeSendSheet value),
     Result MantaSheetState(AppHomeMantaSheet value),
     @required Result orElse(),
@@ -377,6 +413,248 @@ abstract class AppHomeInitial implements AppHome {
 
   @override
   AppHomeInitial copyWith(
+      {BaseState base,
+      int balance,
+      String unit,
+      @Default(const {}) Map<String, int> assets,
+      @Default(const []) List<dynamic> transactions,
+      int currentAsset});
+}
+
+class _$AppHomeReceiveSheet implements AppHomeReceiveSheet {
+  _$AppHomeReceiveSheet(
+      {this.base,
+      this.balance,
+      this.unit,
+      @Default(const {}) this.assets = const {},
+      @Default(const []) this.transactions = const [],
+      this.currentAsset});
+
+  @override
+  final BaseState base;
+  @override
+  final int balance;
+  @override
+  final String unit;
+  @JsonKey(defaultValue: const {})
+  @override
+  @Default(const {})
+  final Map<String, int> assets;
+  @JsonKey(defaultValue: const [])
+  @override
+  @Default(const [])
+  final List<dynamic> transactions;
+  @override
+  final int currentAsset;
+
+  @override
+  String toString() {
+    return 'AppHome.ReceiveSheetState(base: $base, balance: $balance, unit: $unit, assets: $assets, transactions: $transactions, currentAsset: $currentAsset)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is AppHomeReceiveSheet &&
+            (identical(other.base, base) ||
+                const DeepCollectionEquality().equals(other.base, base)) &&
+            (identical(other.balance, balance) ||
+                const DeepCollectionEquality()
+                    .equals(other.balance, balance)) &&
+            (identical(other.unit, unit) ||
+                const DeepCollectionEquality().equals(other.unit, unit)) &&
+            (identical(other.assets, assets) ||
+                const DeepCollectionEquality().equals(other.assets, assets)) &&
+            (identical(other.transactions, transactions) ||
+                const DeepCollectionEquality()
+                    .equals(other.transactions, transactions)) &&
+            (identical(other.currentAsset, currentAsset) ||
+                const DeepCollectionEquality()
+                    .equals(other.currentAsset, currentAsset)));
+  }
+
+  @override
+  int get hashCode =>
+      runtimeType.hashCode ^
+      const DeepCollectionEquality().hash(base) ^
+      const DeepCollectionEquality().hash(balance) ^
+      const DeepCollectionEquality().hash(unit) ^
+      const DeepCollectionEquality().hash(assets) ^
+      const DeepCollectionEquality().hash(transactions) ^
+      const DeepCollectionEquality().hash(currentAsset);
+
+  @override
+  _$AppHomeReceiveSheet copyWith({
+    Object base = freezed,
+    Object balance = freezed,
+    Object unit = freezed,
+    Object assets = freezed,
+    Object transactions = freezed,
+    Object currentAsset = freezed,
+  }) {
+    return _$AppHomeReceiveSheet(
+      base: base == freezed ? this.base : base as BaseState,
+      balance: balance == freezed ? this.balance : balance as int,
+      unit: unit == freezed ? this.unit : unit as String,
+      assets: assets == freezed ? this.assets : assets as Map<String, int>,
+      transactions: transactions == freezed
+          ? this.transactions
+          : transactions as List<dynamic>,
+      currentAsset:
+          currentAsset == freezed ? this.currentAsset : currentAsset as int,
+    );
+  }
+
+  @override
+  @optionalTypeArgs
+  Result when<Result extends Object>(
+    Result $default(
+        BaseState base,
+        int balance,
+        String unit,
+        @Default(const {}) Map<String, int> assets,
+        @Default(const []) List<dynamic> transactions,
+        int currentAsset), {
+    @required
+        Result ReceiveSheetState(
+            BaseState base,
+            int balance,
+            String unit,
+            @Default(const {}) Map<String, int> assets,
+            @Default(const []) List<dynamic> transactions,
+            int currentAsset),
+    @required
+        Result SendSheetState(
+            BaseState base,
+            int balance,
+            String unit,
+            Map<String, int> assets,
+            List<dynamic> transactions,
+            int currentAsset,
+            int destAmount,
+            String destAddress),
+    @required
+        Result MantaSheetState(
+            BaseState base,
+            int balance,
+            String unit,
+            Map<String, int> assets,
+            List<dynamic> transactions,
+            int currentAsset,
+            Merchant merchant,
+            Destination destination),
+  }) {
+    assert($default != null);
+    assert(ReceiveSheetState != null);
+    assert(SendSheetState != null);
+    assert(MantaSheetState != null);
+    return ReceiveSheetState(
+        base, balance, unit, assets, transactions, currentAsset);
+  }
+
+  @override
+  @optionalTypeArgs
+  Result maybeWhen<Result extends Object>(
+    Result $default(
+        BaseState base,
+        int balance,
+        String unit,
+        @Default(const {}) Map<String, int> assets,
+        @Default(const []) List<dynamic> transactions,
+        int currentAsset), {
+    Result ReceiveSheetState(
+        BaseState base,
+        int balance,
+        String unit,
+        @Default(const {}) Map<String, int> assets,
+        @Default(const []) List<dynamic> transactions,
+        int currentAsset),
+    Result SendSheetState(
+        BaseState base,
+        int balance,
+        String unit,
+        Map<String, int> assets,
+        List<dynamic> transactions,
+        int currentAsset,
+        int destAmount,
+        String destAddress),
+    Result MantaSheetState(
+        BaseState base,
+        int balance,
+        String unit,
+        Map<String, int> assets,
+        List<dynamic> transactions,
+        int currentAsset,
+        Merchant merchant,
+        Destination destination),
+    @required Result orElse(),
+  }) {
+    assert(orElse != null);
+    if (ReceiveSheetState != null) {
+      return ReceiveSheetState(
+          base, balance, unit, assets, transactions, currentAsset);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  Result map<Result extends Object>(
+    Result $default(AppHomeInitial value), {
+    @required Result ReceiveSheetState(AppHomeReceiveSheet value),
+    @required Result SendSheetState(AppHomeSendSheet value),
+    @required Result MantaSheetState(AppHomeMantaSheet value),
+  }) {
+    assert($default != null);
+    assert(ReceiveSheetState != null);
+    assert(SendSheetState != null);
+    assert(MantaSheetState != null);
+    return ReceiveSheetState(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  Result maybeMap<Result extends Object>(
+    Result $default(AppHomeInitial value), {
+    Result ReceiveSheetState(AppHomeReceiveSheet value),
+    Result SendSheetState(AppHomeSendSheet value),
+    Result MantaSheetState(AppHomeMantaSheet value),
+    @required Result orElse(),
+  }) {
+    assert(orElse != null);
+    if (ReceiveSheetState != null) {
+      return ReceiveSheetState(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class AppHomeReceiveSheet implements AppHome {
+  factory AppHomeReceiveSheet(
+      {BaseState base,
+      int balance,
+      String unit,
+      @Default(const {}) Map<String, int> assets,
+      @Default(const []) List<dynamic> transactions,
+      int currentAsset}) = _$AppHomeReceiveSheet;
+
+  @override
+  BaseState get base;
+  @override
+  int get balance;
+  @override
+  String get unit;
+  @override
+  @Default(const {})
+  Map<String, int> get assets;
+  @override
+  @Default(const [])
+  List<dynamic> get transactions;
+  @override
+  int get currentAsset;
+
+  @override
+  AppHomeReceiveSheet copyWith(
       {BaseState base,
       int balance,
       String unit,
@@ -495,6 +773,14 @@ class _$AppHomeSendSheet implements AppHomeSendSheet {
         @Default(const []) List<dynamic> transactions,
         int currentAsset), {
     @required
+        Result ReceiveSheetState(
+            BaseState base,
+            int balance,
+            String unit,
+            @Default(const {}) Map<String, int> assets,
+            @Default(const []) List<dynamic> transactions,
+            int currentAsset),
+    @required
         Result SendSheetState(
             BaseState base,
             int balance,
@@ -516,6 +802,7 @@ class _$AppHomeSendSheet implements AppHomeSendSheet {
             Destination destination),
   }) {
     assert($default != null);
+    assert(ReceiveSheetState != null);
     assert(SendSheetState != null);
     assert(MantaSheetState != null);
     return SendSheetState(base, balance, unit, assets, transactions,
@@ -532,6 +819,13 @@ class _$AppHomeSendSheet implements AppHomeSendSheet {
         @Default(const {}) Map<String, int> assets,
         @Default(const []) List<dynamic> transactions,
         int currentAsset), {
+    Result ReceiveSheetState(
+        BaseState base,
+        int balance,
+        String unit,
+        @Default(const {}) Map<String, int> assets,
+        @Default(const []) List<dynamic> transactions,
+        int currentAsset),
     Result SendSheetState(
         BaseState base,
         int balance,
@@ -564,10 +858,12 @@ class _$AppHomeSendSheet implements AppHomeSendSheet {
   @optionalTypeArgs
   Result map<Result extends Object>(
     Result $default(AppHomeInitial value), {
+    @required Result ReceiveSheetState(AppHomeReceiveSheet value),
     @required Result SendSheetState(AppHomeSendSheet value),
     @required Result MantaSheetState(AppHomeMantaSheet value),
   }) {
     assert($default != null);
+    assert(ReceiveSheetState != null);
     assert(SendSheetState != null);
     assert(MantaSheetState != null);
     return SendSheetState(this);
@@ -577,6 +873,7 @@ class _$AppHomeSendSheet implements AppHomeSendSheet {
   @optionalTypeArgs
   Result maybeMap<Result extends Object>(
     Result $default(AppHomeInitial value), {
+    Result ReceiveSheetState(AppHomeReceiveSheet value),
     Result SendSheetState(AppHomeSendSheet value),
     Result MantaSheetState(AppHomeMantaSheet value),
     @required Result orElse(),
@@ -738,6 +1035,14 @@ class _$AppHomeMantaSheet implements AppHomeMantaSheet {
         @Default(const []) List<dynamic> transactions,
         int currentAsset), {
     @required
+        Result ReceiveSheetState(
+            BaseState base,
+            int balance,
+            String unit,
+            @Default(const {}) Map<String, int> assets,
+            @Default(const []) List<dynamic> transactions,
+            int currentAsset),
+    @required
         Result SendSheetState(
             BaseState base,
             int balance,
@@ -759,6 +1064,7 @@ class _$AppHomeMantaSheet implements AppHomeMantaSheet {
             Destination destination),
   }) {
     assert($default != null);
+    assert(ReceiveSheetState != null);
     assert(SendSheetState != null);
     assert(MantaSheetState != null);
     return MantaSheetState(base, balance, unit, assets, transactions,
@@ -775,6 +1081,13 @@ class _$AppHomeMantaSheet implements AppHomeMantaSheet {
         @Default(const {}) Map<String, int> assets,
         @Default(const []) List<dynamic> transactions,
         int currentAsset), {
+    Result ReceiveSheetState(
+        BaseState base,
+        int balance,
+        String unit,
+        @Default(const {}) Map<String, int> assets,
+        @Default(const []) List<dynamic> transactions,
+        int currentAsset),
     Result SendSheetState(
         BaseState base,
         int balance,
@@ -807,10 +1120,12 @@ class _$AppHomeMantaSheet implements AppHomeMantaSheet {
   @optionalTypeArgs
   Result map<Result extends Object>(
     Result $default(AppHomeInitial value), {
+    @required Result ReceiveSheetState(AppHomeReceiveSheet value),
     @required Result SendSheetState(AppHomeSendSheet value),
     @required Result MantaSheetState(AppHomeMantaSheet value),
   }) {
     assert($default != null);
+    assert(ReceiveSheetState != null);
     assert(SendSheetState != null);
     assert(MantaSheetState != null);
     return MantaSheetState(this);
@@ -820,6 +1135,7 @@ class _$AppHomeMantaSheet implements AppHomeMantaSheet {
   @optionalTypeArgs
   Result maybeMap<Result extends Object>(
     Result $default(AppHomeInitial value), {
+    Result ReceiveSheetState(AppHomeReceiveSheet value),
     Result SendSheetState(AppHomeSendSheet value),
     Result MantaSheetState(AppHomeMantaSheet value),
     @required Result orElse(),

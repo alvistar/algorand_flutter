@@ -1,6 +1,7 @@
 import 'package:algorand_flutter/blocs/app_bloc.dart';
 import 'package:algorand_flutter/blocs/app_event.dart';
 import 'package:algorand_flutter/blocs/app_state.dart';
+import 'package:algorand_flutter/ui/receive_sheet.dart';
 import 'package:algorand_flutter/ui/send_sheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import 'manta_sheet.dart';
 
 class HomePage extends StatelessWidget {
   static GlobalKey sendKey = GlobalKey();
+  static GlobalKey receiveKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +38,21 @@ class HomePage extends StatelessWidget {
       // This is not the best as breaking logic of events to change state
       appBloc.add(AppSendSheetDismissed());
     }
+
+    showReceiveSheet() async {
+      if (receiveKey.currentWidget != null) {
+        return;
+      }
+
+      final result = await showModalBottomSheet(
+          context: context,
+          builder: (context) => BlocProvider.value(
+              value: appBloc,
+              child: ReceiveSheet()));
+
+      appBloc.add(AppReceiveSheetDismissed());
+    }
+
 
     showMantaSheet({Merchant merchant, Destination destination}) async {
       final result = await showModalBottomSheet(
@@ -68,6 +85,10 @@ class HomePage extends StatelessWidget {
             if (state is AppHomeInitial) {
               // Ensure we are on InitialAppState
               Navigator.popUntil(context, (route) => route.isFirst);
+            }
+
+            if (state is AppHomeReceiveSheet) {
+              showReceiveSheet();
             }
 
             if (state is AppHomeSendSheet) {
@@ -106,11 +127,22 @@ class HomePage extends StatelessWidget {
                     transactions: (appBloc.state as AppHome).transactions)),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: RaisedButton(
-                child: const Text('SEND'),
-                onPressed: () {
-                  appBloc.add(AppSendSheetShow());
-                },
+              child: ButtonBar(
+                alignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  RaisedButton(
+                    child: const Text('RECEIVE'),
+                    onPressed: () => appBloc.add(AppReceiveSheetShow()),
+                    color: Colors.blue,
+                  ),
+                  RaisedButton(
+                    child: const Text('SEND'),
+                    color: Colors.blue,
+                    onPressed: () {
+                      appBloc.add(AppSendSheetShow());
+                    },
+                  )
+                ],
               ),
             )
           ]),
@@ -169,18 +201,22 @@ transactionList(
 }
 
 Widget transactionEntry(
-    {String destination, int amount, bool sent, int index, String transactionID}) {
+    {String destination,
+    int amount,
+    bool sent,
+    int index,
+    String transactionID}) {
   return Card(
       child: InkWell(
-        onTap: () async {
-          final url = 'https://testnet.algoexplorer.io/tx/$transactionID';
-          if (await canLaunch(url)) {
-            await launch(url);
-          }
-        },
-        child: Row(
-    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    children: <Widget>[
+    onTap: () async {
+      final url = 'https://testnet.algoexplorer.io/tx/$transactionID';
+      if (await canLaunch(url)) {
+        await launch(url);
+      }
+    },
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
         Column(
           children: <Widget>[
             Text(index.toString()),
@@ -201,7 +237,7 @@ Widget transactionEntry(
             overflow: TextOverflow.ellipsis,
           ),
         ))
-    ],
-  ),
-      ));
+      ],
+    ),
+  ));
 }

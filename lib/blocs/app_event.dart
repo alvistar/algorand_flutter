@@ -35,6 +35,15 @@ class AppSendSheetShow extends AppEvent {
   List<Object> get props => [];
 }
 
+class AppReceiveSheetShow extends AppEvent {
+  @override
+  List<Object> get props => [];
+}
+
+class AppReceiveSheetDismissed extends AppEvent {
+  @override
+  List<Object> get props => [];
+}
 
 class AppSendSheetDismissed extends AppEvent {
   @override

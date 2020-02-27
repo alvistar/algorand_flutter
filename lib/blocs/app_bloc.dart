@@ -18,6 +18,7 @@ import 'package:meta/meta.dart';
 import '../configuration.dart';
 import 'AppAccountSetupMapper.dart';
 import 'AppHomeMantaSheetMapper.dart';
+import 'AppHomeReceiveSheetMapper.dart';
 import 'AppHomeSendSheetMapper.dart';
 import 'AppSettingsMapper.dart';
 import 'app_event.dart';
@@ -35,7 +36,8 @@ class AppBloc extends Bloc<AppEvent, AppState>
         AppSettingsMapper,
         AppImportSeedMapper,
         AppSeedMapper,
-        AppAccountSetupMapper {
+        AppAccountSetupMapper,
+        AppHomeReceiveSheetMapper {
   Timer accountTimer;
   MantaWallet mantaWallet;
   Configuration configuration;
@@ -97,6 +99,8 @@ class AppBloc extends Bloc<AppEvent, AppState>
       yield* mapAppHomeInitialToState(event, state);
     } else if (state is AppHomeSendSheet) {
       yield* mapAppHomeSendSheetToState(event, state);
+    } else if (state is AppHomeReceiveSheet) {
+      yield* mapAppHomeReceiveSheetToState(event, state);
     } else if (state is AppHomeMantaSheet) {
       yield* mapAppHomeMantaSheetToState(event, state);
     } else if (state is AppSettings) {
@@ -195,13 +199,11 @@ class AppBloc extends Bloc<AppEvent, AppState>
     // On enter InitialAppState
     if (transition.nextState is AppHomeInitial &&
         !(transition.currentState is AppHomeInitial)) {
-      
       subscribeTX(
           address: transition.nextState.base.account.address,
           asset: (transition.nextState as AppHomeInitial).currentAsset);
 
       subscribeAccount(transition.nextState.base.account.address);
-
     }
 
     // On exit InitialAppState

@@ -25,6 +25,14 @@ abstract class AppHome with _$AppHome implements AppState {
       @Default(const []) List transactions,
       int currentAsset}) = AppHomeInitial;
 
+  factory AppHome.ReceiveSheetState(
+      {BaseState base,
+        int balance,
+        String unit,
+        @Default(const  {}) Map<String, int>  assets,
+        @Default(const []) List transactions,
+        int currentAsset}) = AppHomeReceiveSheet;
+
   factory AppHome.SendSheetState(
       {BaseState base,
       int balance,
@@ -57,6 +65,16 @@ extension Utils on AppHome {
         currentAsset: currentAsset,
         destAmount: destAmount,
         destAddress: destAddress);
+  }
+
+  AppHomeReceiveSheet toReceiveSheet ({int destAmount, String destAddress}) {
+    return AppHome.ReceiveSheetState(
+        base: base,
+        balance: balance,
+        unit: unit,
+        assets: assets,
+        transactions: transactions,
+        currentAsset: currentAsset);
   }
 
   AppHomeMantaSheet toMantaSheet({Merchant merchant, Destination destination}) {

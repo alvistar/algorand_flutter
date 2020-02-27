@@ -26,6 +26,10 @@ class AppHomeInitialMapper with Mapper {
       yield AppSettings(base: state.base, pstate: state);
     } else if (event is AppSendSheetShow) {
       yield state.toSendSheet();
+    } else if (event is AppReceiveSheetShow) {
+      yield state.toReceiveSheet();
+    } else if (event is AppReceiveSheetDismissed) {
+      // Ignore: sheet has been already closed
     } else if (event is AppSendSheetDismissed) {
       // Ignore: sheet has been already closed
     } else if (event is AppMantaSheetDismissed) {
@@ -41,10 +45,12 @@ class AppHomeInitialMapper with Mapper {
       AppAccountInfoUpdated event, AppHomeInitial state) async* {
     final assets = {'algo': -1};
 
-    for (String index in event.account.assets.keys) {
-      final assetInfo =
-          await this.appBloc.repository.getAssetInformation(int.parse(index));
-      assets[assetInfo.unitname] = int.parse(index);
+    if (event.account.assets != null) {
+      for (String index in event.account.assets.keys) {
+        final assetInfo =
+            await this.appBloc.repository.getAssetInformation(int.parse(index));
+        assets[assetInfo.unitname] = int.parse(index);
+      }
     }
 
     // assets.addAll(getAssets(event.account));

@@ -15,9 +15,7 @@ class AppHomeInitialMapper with Mapper {
       await this.appBloc.txSubscription.cancel();
 
       appBloc.subscribeTX(
-        address: state.base.account.address,
-        asset: event.asset
-      );
+          address: state.base.account.address, asset: event.asset);
 
       yield state.copyWith(
           balance: getBalance(asset: asset, account: state.base.accountInfo),
@@ -29,12 +27,12 @@ class AppHomeInitialMapper with Mapper {
     } else if (event is AppSendSheetShow) {
       yield state.toSendSheet();
     } else if (event is AppSendSheetDismissed) {
-     // Ignore: sheet has been already closed
-    }
-    else if (event is AppTransactionsUpdate) {
+      // Ignore: sheet has been already closed
+    } else if (event is AppMantaSheetDismissed) {
+      // Ignore: sheet has been already closed
+    } else if (event is AppTransactionsUpdate) {
       this.appBloc.updating.complete();
-    }
-    else {
+    } else {
       throw UnimplementedError('$event not handled in $state');
     }
   }
@@ -54,8 +52,7 @@ class AppHomeInitialMapper with Mapper {
 
     yield state.copyWith(
         base: newBase,
-        balance: getBalance(
-            asset: state.currentAsset, account: event.account),
+        balance: getBalance(asset: state.currentAsset, account: event.account),
         assets: assets);
   }
 }

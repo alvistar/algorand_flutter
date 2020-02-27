@@ -32,9 +32,9 @@ class AppHomeSendSheetMapper with Mapper{
 
     if (mantaParsed != null) {
       print("Manta Address!");
-      final mantaWallet = MantaWallet(barcodeScanRes);
+      appBloc.mantaWallet = MantaWallet(barcodeScanRes);
       final envelope =
-          await mantaWallet.getPaymentRequest(cryptoCurrency: "ALGO-TESTNET");
+          await appBloc.mantaWallet.getPaymentRequest(cryptoCurrency: "ALGO-TESTNET");
       final pr = envelope.unpack();
 
       yield state.toMantaSheet(

@@ -63,21 +63,6 @@ class HomePage extends StatelessWidget {
           ],
         ),
         body: BlocListener<AppBloc, AppState>(
-          condition: (previous, current) {
-            // Conditions to avoid opening two SendSheet
-
-//            if (current is HomeSendSheetState &&
-//                previous is HomeSendSheetState) {
-//              return false;
-//            }
-
-//            if (current is HomeSendSheetState &&
-//                previous is  HomeMantaSheetState) {
-//              return false;
-//            }
-
-            return true;
-          },
           listener: (context, state) {
             if (state is AppHomeInitial) {
               // Ensure we are on InitialAppState
@@ -95,39 +80,40 @@ class HomePage extends StatelessWidget {
             }
           },
           child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Card(
-                  child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      Text((appBloc.state as AppHome).balance.toString()),
-                      assetDropdown(
-                          current: (appBloc.state as AppHome).currentAsset,
-                          assets: (appBloc.state as AppHome).assets,
-                          onChanged: (value) {
-                            appBloc.add(AppAssetChanged(value));
-                          })
-                    ]),
-              )),
-            ),
-            Expanded(
-                child: transactionList(
-                    onRefresh: () => appBloc.addAsync(AppTransactionsUpdate()),
-                    address: appBloc.state.base.account.address,
-                    transactions: (appBloc.state as AppHome).transactions)),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: RaisedButton(
-                child: const Text('SEND'),
-                onPressed: () {
-                  appBloc.add(AppSendSheetShow());
-                },
+              Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Card(
+              child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Text((appBloc.state as AppHome).balance.toString()),
+                  assetDropdown(
+                      current: (appBloc.state as AppHome).currentAsset,
+                      assets: (appBloc.state as AppHome).assets,
+                      onChanged: (value) {
+                        appBloc.add(AppAssetChanged(value));
+                      })
+                ]),
+          )),
               ),
-            )
-          ]),
+              Expanded(
+            child: transactionList(
+                onRefresh: () =>
+                    appBloc.addAsync(AppTransactionsUpdate()),
+                address: appBloc.state.base.account.address,
+                transactions: (appBloc.state as AppHome).transactions)),
+              Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: RaisedButton(
+            child: const Text('SEND'),
+            onPressed: () {
+              appBloc.add(AppSendSheetShow());
+            },
+          ),
+              )
+            ]),
         ));
   }
 }
@@ -153,18 +139,22 @@ assetDropdown(
 
 transactionList(
     {List transactions, String address, Future<void> Function() onRefresh}) {
+  transactions = transactions.reversed.toList();
+
   final pts = transactions.whereType<TransactionPay>();
   final apts = transactions.whereType<TransactionAssetTransfer>();
-//  final listIter = pts.map((entry) => ListTile(
-//        title: Text(entry.to),
-//        subtitle: Text(entry.amount.toString()),
-//      ));
 
   final listIter = pts.map((entry) => transactionEntry(
-      destination: entry.to, amount: entry.amount, sent: entry.to != address));
+      destination: entry.to,
+      amount: entry.amount,
+      sent: entry.to != address,
+      index: entry.index));
 
   final aListIter = apts.map((entry) => transactionEntry(
-      destination: entry.to, amount: entry.amount, sent: entry.to != address));
+      destination: entry.to,
+      amount: entry.amount,
+      sent: entry.to != address,
+      index: entry.index));
 
   final entries = listIter.toList();
   entries.addAll(aListIter);
@@ -176,21 +166,28 @@ transactionList(
       ));
 }
 
-Widget transactionEntry({String destination, int amount, bool sent}) {
+Widget transactionEntry(
+    {String destination, int amount, bool sent, int index}) {
   return Card(
       child: Row(
     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
     children: <Widget>[
       Column(
         children: <Widget>[
+          Text(index.toString()),
           Text(
             sent ? 'Sent' : 'Received',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          Text(amount.toString()),
+          Text(
+            amount.toString(),
+          ),
         ],
       ),
-      Text(destination)
+      Flexible(child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(destination, overflow: TextOverflow.ellipsis,),
+      ))
     ],
   ));
 }

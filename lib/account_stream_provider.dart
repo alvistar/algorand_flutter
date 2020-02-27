@@ -26,7 +26,7 @@ class AccountStreamProvider {
       return repository.getAccountInformation(address);
     });
 
-    
+
     _subject.addStream(output);
 
     _addSubject.add(null);

@@ -10,6 +10,7 @@ import 'package:dart_algorand/algod/model/asset_params.dart';
 import 'package:dart_algorand/algod/model/transaction_id.dart';
 import 'package:dart_algorand/algod/model/transaction_params.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:rxdart/rxdart.dart';
 
 class AlgoRepository {
@@ -88,15 +89,14 @@ class AlgoRepository {
 
 algod.AlgodApi init_client() {
   final options = BaseOptions(
-    baseUrl: 'http://algorand-testnet.beappia.com',
+    baseUrl: DotEnv().env['ALGO_NODE_HOST'],
     connectTimeout: 5000,
     receiveTimeout: 3000,
   );
 
   final dio = Dio(options);
   dio.interceptors.add(InterceptorsWrapper(onRequest: (Options options) {
-    options.headers['X-Algo-API-Token'] =
-        'b5985ac6e3b5203003b4af1466d799055101fad921c89b9ba004c3dd409d4b22';
+    options.headers['X-Algo-API-Token'] = DotEnv().env['ALGO_NODE_TOKEN'];
   }, onError: (DioError e) {
     if (e.response != null) {
       print(e.response.data);

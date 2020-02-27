@@ -1,16 +1,11 @@
 # algorand_flutter
 
-A new Flutter project.
+A Algorand wallet demo with Manta protocol integration - https://appia.co -
 
-## Getting Started
+Key generation and account handling is handled locally, but a Algod node is required to broadcast
+transactions.
 
-This project is a starting point for a Flutter application.
+You need to provide algod host and token in .env.
 
-A few resources to get you started if this is your first Flutter project:
+The wallet is also using Algo Explorer API to check history of transactions.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.

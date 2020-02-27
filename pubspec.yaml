@@ -28,6 +28,7 @@ dependencies:
   shared_preferences: ^0.5.6
   rxdart: ^0.23.1
   url_launcher: ^5.4.2
+  flutter_dotenv: ^2.1.0
 
   manta_dart:
     git: git://github.com/appiapay/manta-dart.git
@@ -65,7 +66,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
+  assets:
+    - .env
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

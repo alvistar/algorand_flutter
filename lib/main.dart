@@ -7,6 +7,7 @@ import 'package:algorand_flutter/ui/show_seed.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:logging/logging.dart';
 
 import 'blocs/app_bloc.dart';
@@ -43,6 +44,9 @@ class SimpleBlocDelegate extends BlocDelegate {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await DotEnv().load('.env');
+  print (DotEnv().env['ALGO_NODE']);
 
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((LogRecord rec) {

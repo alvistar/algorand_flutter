@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:manta_dart/messages.dart';
 import 'package:algo_explorer_api/algo_explorer_api.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'manta_sheet.dart';
 
@@ -80,40 +81,39 @@ class HomePage extends StatelessWidget {
             }
           },
           child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-              Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Card(
-              child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Text((appBloc.state as AppHome).balance.toString()),
-                  assetDropdown(
-                      current: (appBloc.state as AppHome).currentAsset,
-                      assets: (appBloc.state as AppHome).assets,
-                      onChanged: (value) {
-                        appBloc.add(AppAssetChanged(value));
-                      })
-                ]),
-          )),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Card(
+                  child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Text((appBloc.state as AppHome).balance.toString()),
+                      assetDropdown(
+                          current: (appBloc.state as AppHome).currentAsset,
+                          assets: (appBloc.state as AppHome).assets,
+                          onChanged: (value) {
+                            appBloc.add(AppAssetChanged(value));
+                          })
+                    ]),
+              )),
+            ),
+            Expanded(
+                child: transactionList(
+                    onRefresh: () => appBloc.addAsync(AppTransactionsUpdate()),
+                    address: appBloc.state.base.account.address,
+                    transactions: (appBloc.state as AppHome).transactions)),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: RaisedButton(
+                child: const Text('SEND'),
+                onPressed: () {
+                  appBloc.add(AppSendSheetShow());
+                },
               ),
-              Expanded(
-            child: transactionList(
-                onRefresh: () =>
-                    appBloc.addAsync(AppTransactionsUpdate()),
-                address: appBloc.state.base.account.address,
-                transactions: (appBloc.state as AppHome).transactions)),
-              Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: RaisedButton(
-            child: const Text('SEND'),
-            onPressed: () {
-              appBloc.add(AppSendSheetShow());
-            },
-          ),
-              )
-            ]),
+            )
+          ]),
         ));
   }
 }
@@ -145,12 +145,14 @@ transactionList(
   final apts = transactions.whereType<TransactionAssetTransfer>();
 
   final listIter = pts.map((entry) => transactionEntry(
+      transactionID: entry.txid,
       destination: entry.to,
       amount: entry.amount,
       sent: entry.to != address,
       index: entry.index));
 
   final aListIter = apts.map((entry) => transactionEntry(
+      transactionID: entry.txid,
       destination: entry.to,
       amount: entry.amount,
       sent: entry.to != address,
@@ -167,27 +169,39 @@ transactionList(
 }
 
 Widget transactionEntry(
-    {String destination, int amount, bool sent, int index}) {
+    {String destination, int amount, bool sent, int index, String transactionID}) {
   return Card(
-      child: Row(
+      child: InkWell(
+        onTap: () async {
+          final url = 'https://testnet.algoexplorer.io/tx/$transactionID';
+          if (await canLaunch(url)) {
+            await launch(url);
+          }
+        },
+        child: Row(
     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
     children: <Widget>[
-      Column(
-        children: <Widget>[
-          Text(index.toString()),
-          Text(
-            sent ? 'Sent' : 'Received',
-            style: TextStyle(fontWeight: FontWeight.bold),
+        Column(
+          children: <Widget>[
+            Text(index.toString()),
+            Text(
+              sent ? 'Sent' : 'Received',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(
+              amount.toString(),
+            ),
+          ],
+        ),
+        Flexible(
+            child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            destination,
+            overflow: TextOverflow.ellipsis,
           ),
-          Text(
-            amount.toString(),
-          ),
-        ],
-      ),
-      Flexible(child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(destination, overflow: TextOverflow.ellipsis,),
-      ))
+        ))
     ],
-  ));
+  ),
+      ));
 }

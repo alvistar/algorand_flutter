@@ -100,33 +100,32 @@ class HomePage extends StatelessWidget {
                   merchant: state.merchant, destination: state.destination);
             }
           },
-          child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Card(
-                  child: Padding(
+          child: SafeArea(
+            child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+              Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      Text((appBloc.state as AppHome).balance.toString()),
-                      assetDropdown(
-                          current: (appBloc.state as AppHome).currentAsset,
-                          assets: (appBloc.state as AppHome).assets,
-                          onChanged: (value) {
-                            appBloc.add(AppAssetChanged(value));
-                          })
-                    ]),
-              )),
-            ),
-            Expanded(
-                child: transactionList(
-                    onRefresh: () => appBloc.addAsync(AppTransactionsUpdate()),
-                    address: appBloc.state.base.account.address,
-                    transactions: (appBloc.state as AppHome).transactions)),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ButtonBar(
+                child: Card(
+                    child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Text((appBloc.state as AppHome).balance.toString()),
+                        assetDropdown(
+                            current: (appBloc.state as AppHome).currentAsset,
+                            assets: (appBloc.state as AppHome).assets,
+                            onChanged: (value) {
+                              appBloc.add(AppAssetChanged(value));
+                            })
+                      ]),
+                )),
+              ),
+              Expanded(
+                  child: transactionList(
+                      onRefresh: () => appBloc.addAsync(AppTransactionsUpdate()),
+                      address: appBloc.state.base.account.address,
+                      transactions: (appBloc.state as AppHome).transactions)),
+              ButtonBar(
                 alignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   RaisedButton(
@@ -142,9 +141,9 @@ class HomePage extends StatelessWidget {
                     },
                   )
                 ],
-              ),
-            )
-          ]),
+              )
+            ]),
+          ),
         ));
   }
 }

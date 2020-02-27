@@ -45,67 +45,74 @@ class SendSheetUIState extends State<SendSheet> {
   Widget build(BuildContext context) {
     final AppBloc appBloc = BlocProvider.of<AppBloc>(context);
     return BlocListener<AppBloc, AppState>(
-        listener: (context, state) {
-          if (state is AppHomeSendSheet) {
-            _amount.text = state.destAmount.toString();
-            _destination.text = state.destAddress;
-          }
-        },
-        child:  AnimatedPadding(
+      listener: (context, state) {
+        if (state is AppHomeSendSheet) {
+          _amount.text = state.destAmount.toString();
+          _destination.text = state.destAddress;
+        }
+      },
+      child: SafeArea(
+        child: Padding(
           padding: MediaQuery.of(context).viewInsets,
-            duration: const Duration(microseconds: 100),
-            child: Form(
-              key: _formKey,
+          child: Form(
+            key: _formKey,
 //          height: 500,
 //          color: Colors.grey,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                  TextFormField(
-                      maxLines: null,
-                      controller: _destination,
-                      textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(labelText: 'TO'),
-                      onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_amountFocusNode),
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return 'Please enter address';
-                        }
-
-                        if (!is_valid_address(value)) {
-                          return 'This is not a valid address';
-                        }
-                        return null;
-                      }),
-                  TextFormField(
-                    controller: _amount,
-                    focusNode: _amountFocusNode,
-                    textInputAction: TextInputAction.done,
-                    inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-                    decoration: InputDecoration(labelText: 'AMOUNT'),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
+                TextFormField(
+                    maxLines: null,
+                    controller: _destination,
+                    textInputAction: TextInputAction.next,
+                    decoration: InputDecoration(labelText: 'TO'),
+                    onFieldSubmitted: (_) =>
+                        FocusScope.of(context).requestFocus(_amountFocusNode),
                     validator: (value) {
                       if (value.isEmpty) {
-                        return 'Please enter amount';
+                        return 'Please enter address';
                       }
 
-                      if (int.parse(value) >
-                          (appBloc.state as AppHomeSendSheet).balance) {
-                        return 'Not enough balance';
+                      if (!is_valid_address(value)) {
+                        return 'This is not a valid address';
                       }
-
                       return null;
-                    },
-                  ),
+                    }),
+                TextFormField(
+                  controller: _amount,
+                  focusNode: _amountFocusNode,
+                  textInputAction: TextInputAction.done,
+                  inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+                  decoration: InputDecoration(labelText: 'AMOUNT'),
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return 'Please enter amount';
+                    }
+
+                    if (int.parse(value) >
+                        (appBloc.state as AppHomeSendSheet).balance) {
+                      return 'Not enough balance';
+                    }
+
+                    return null;
+                  },
+                ),
+                ButtonBar(
+                    alignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+
                   RaisedButton(
                     child: Text('SCAN'),
+                    textColor: Colors.white,
+                    color: Colors.blue,
                     onPressed: () async {
                       appBloc.add(AppQRScan());
                     },
                   ),
                   RaisedButton(
                     child: Text('SEND'),
+                    textColor: Colors.white,
+                    color: Colors.blue,
                     onPressed: () {
                       if (!_formKey.currentState.validate()) {
                         return;
@@ -117,9 +124,11 @@ class SendSheetUIState extends State<SendSheet> {
                     },
                   )
                 ]),
-              ),
+              ]),
             ),
           ),
-        );
+        ),
+      ),
+    );
   }
 }

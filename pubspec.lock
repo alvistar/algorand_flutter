@@ -11,9 +11,11 @@ packages:
   algo_explorer_api:
     dependency: "direct main"
     description:
-      path: "../algo-explorer-api"
-      relative: true
-    source: path
+      path: "."
+      ref: HEAD
+      resolved-ref: "12cab5432202df52d1fc27487098a1958be2bd37"
+      url: "git://github.com/alvistar/algo_explorer_api.git"
+    source: git
     version: "0.0.0"
   analyzer:
     dependency: transitive
@@ -193,9 +195,11 @@ packages:
   dart_algorand:
     dependency: "direct main"
     description:
-      path: "../dart_algorand"
-      relative: true
-    source: path
+      path: "."
+      ref: HEAD
+      resolved-ref: fcdbc29c14aa55ba01ef8f410657ed59757e3077
+      url: "git://github.com/alvistar/dart_algorand.git"
+    source: git
     version: "0.0.0"
   dart_style:
     dependency: transitive

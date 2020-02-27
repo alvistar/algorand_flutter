@@ -34,10 +34,10 @@ dependencies:
     git: git://github.com/appiapay/manta-dart.git
 
   algo_explorer_api:
-    path: ../algo-explorer-api
+    git: git://github.com/alvistar/algo_explorer_api.git
 
   dart_algorand:
-    path: ../dart_algorand
+    git: git://github.com/alvistar/dart_algorand.git
 
 
   # The following adds the Cupertino Icons font to your application.

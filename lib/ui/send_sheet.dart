@@ -51,67 +51,72 @@ class SendSheetUIState extends State<SendSheet> {
             _destination.text = state.destAddress;
           }
         },
-        child: Form(
-          key: _formKey,
+        child: Scaffold(
+          resizeToAvoidBottomInset: true,
+          body: SingleChildScrollView(
+            child: Form(
+              key: _formKey,
 //          height: 500,
 //          color: Colors.grey,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(children: [
-              TextFormField(
-                  maxLines: null,
-                  controller: _destination,
-                  textInputAction: TextInputAction.next,
-                  decoration: InputDecoration(labelText: 'TO'),
-                  onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_amountFocusNode),
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      return 'Please enter address';
-                    }
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(children: [
+                  TextFormField(
+                      maxLines: null,
+                      controller: _destination,
+                      textInputAction: TextInputAction.next,
+                      decoration: InputDecoration(labelText: 'TO'),
+                      onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_amountFocusNode),
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please enter address';
+                        }
 
-                    if (!is_valid_address(value)) {
-                      return 'This is not a valid address';
-                    }
-                    return null;
-                  }),
-              TextFormField(
-                controller: _amount,
-                focusNode: _amountFocusNode,
-                textInputAction: TextInputAction.done,
-                inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
-                decoration: InputDecoration(labelText: 'AMOUNT'),
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return 'Please enter amount';
-                  }
+                        if (!is_valid_address(value)) {
+                          return 'This is not a valid address';
+                        }
+                        return null;
+                      }),
+                  TextFormField(
+                    controller: _amount,
+                    focusNode: _amountFocusNode,
+                    textInputAction: TextInputAction.done,
+                    inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+                    decoration: InputDecoration(labelText: 'AMOUNT'),
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Please enter amount';
+                      }
 
-                  if (int.parse(value) >
-                      (appBloc.state as AppHomeSendSheet).balance) {
-                    return 'Not enough balance';
-                  }
+                      if (int.parse(value) >
+                          (appBloc.state as AppHomeSendSheet).balance) {
+                        return 'Not enough balance';
+                      }
 
-                  return null;
-                },
+                      return null;
+                    },
+                  ),
+                  RaisedButton(
+                    child: Text('SCAN'),
+                    onPressed: () async {
+                      appBloc.add(AppQRScan());
+                    },
+                  ),
+                  RaisedButton(
+                    child: Text('SEND'),
+                    onPressed: () {
+                      if (!_formKey.currentState.validate()) {
+                        return;
+                      }
+
+                      appBloc.add(AppSend(
+                          destination: _destination.text,
+                          amount: int.parse(_amount.text)));
+                    },
+                  )
+                ]),
               ),
-              RaisedButton(
-                child: Text('SCAN'),
-                onPressed: () async {
-                  appBloc.add(AppQRScan());
-                },
-              ),
-              RaisedButton(
-                child: Text('SEND'),
-                onPressed: () {
-                  if (!_formKey.currentState.validate()) {
-                    return;
-                  }
-
-                  appBloc.add(AppSend(
-                      destination: _destination.text,
-                      amount: int.parse(_amount.text)));
-                },
-              )
-            ]),
+            ),
           ),
         ));
   }

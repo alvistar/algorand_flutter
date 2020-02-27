@@ -22,13 +22,23 @@ class SendSheetUIState extends State<SendSheet> {
   final _destination = TextEditingController();
   final _amount = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  FocusNode _amountFocusNode;
 
   @override
   void initState() {
     _destination.text = widget.destAddress;
     _amount.text =
         widget.destAmount != null ? widget.destAmount.toString() : "";
+
+    _amountFocusNode = FocusNode();
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _amountFocusNode.dispose();
+    super.dispose();
   }
 
   @override
@@ -47,12 +57,13 @@ class SendSheetUIState extends State<SendSheet> {
 //          color: Colors.grey,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Column(
-                children: [
+            child: Column(children: [
               TextFormField(
                   maxLines: null,
                   controller: _destination,
+                  textInputAction: TextInputAction.next,
                   decoration: InputDecoration(labelText: 'TO'),
+                  onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_amountFocusNode),
                   validator: (value) {
                     if (value.isEmpty) {
                       return 'Please enter address';
@@ -65,7 +76,8 @@ class SendSheetUIState extends State<SendSheet> {
                   }),
               TextFormField(
                 controller: _amount,
-                keyboardType: TextInputType.number,
+                focusNode: _amountFocusNode,
+                textInputAction: TextInputAction.done,
                 inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
                 decoration: InputDecoration(labelText: 'AMOUNT'),
                 validator: (value) {

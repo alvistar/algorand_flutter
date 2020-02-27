@@ -51,16 +51,18 @@ class SendSheetUIState extends State<SendSheet> {
             _destination.text = state.destAddress;
           }
         },
-        child: Scaffold(
-          resizeToAvoidBottomInset: true,
-          body: SingleChildScrollView(
+        child:  AnimatedPadding(
+          padding: MediaQuery.of(context).viewInsets,
+            duration: const Duration(microseconds: 100),
             child: Form(
               key: _formKey,
 //          height: 500,
 //          color: Colors.grey,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Column(children: [
+                child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
                   TextFormField(
                       maxLines: null,
                       controller: _destination,
@@ -118,6 +120,6 @@ class SendSheetUIState extends State<SendSheet> {
               ),
             ),
           ),
-        ));
+        );
   }
 }

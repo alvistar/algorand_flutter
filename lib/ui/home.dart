@@ -26,6 +26,7 @@ class HomePage extends StatelessWidget {
       }
 
       final result = await showModalBottomSheet(
+          isScrollControlled: true,
           context: context,
           builder: (context) => BlocProvider.value(
               value: appBloc,
@@ -46,13 +47,11 @@ class HomePage extends StatelessWidget {
 
       final result = await showModalBottomSheet(
           context: context,
-          builder: (context) => BlocProvider.value(
-              value: appBloc,
-              child: ReceiveSheet()));
+          builder: (context) =>
+              BlocProvider.value(value: appBloc, child: ReceiveSheet()));
 
       appBloc.add(AppReceiveSheetDismissed());
     }
-
 
     showMantaSheet({Merchant merchant, Destination destination}) async {
       final result = await showModalBottomSheet(

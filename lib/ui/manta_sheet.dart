@@ -46,6 +46,8 @@ class MantaSheet extends StatelessWidget {
                 initialValue: destination.amount.toString(),
               ),
               RaisedButton(
+                color: Colors.blue,
+                textColor: Colors.white,
                 child: Text('SEND'),
                 onPressed: () {
                   final amt = (destination.amount * Decimal.fromInt(pow(10,6))).toInt();

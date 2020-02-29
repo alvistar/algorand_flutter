@@ -96,9 +96,12 @@ algod.AlgodApi init_client() {
 
   final dio = Dio(options);
   dio.interceptors.add(InterceptorsWrapper(onRequest: (Options options) {
-    options.headers['X-Algo-API-Token'] = DotEnv().env['ALGO_NODE_TOKEN'];
+    if (DotEnv().env['ALGO_NODE_TOKEN'] != null) {
+      options.headers['X-Algo-API-Token'] = DotEnv().env['ALGO_NODE_TOKEN'];
+    }
   }, onError: (DioError e) {
     if (e.response != null) {
+      print(e.request.path);
       print(e.response.data);
       print(e.response.headers);
       print(e.response.request);

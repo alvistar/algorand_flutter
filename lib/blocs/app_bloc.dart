@@ -125,7 +125,8 @@ class AppBloc extends Bloc<AppEvent, AppState>
     }
   }
 
-  sendTransaction({int amount, String destination, String note}) async {
+  Future<String> sendTransaction(
+      {int amount, String destination, String note}) async {
     // Get params for transactions
 
     final params = await repository.getTransactionParams();
@@ -154,9 +155,10 @@ class AppBloc extends Bloc<AppEvent, AppState>
     final result = await repository.sendRawTransaction(rawtxn);
 
     logger.info(result);
+    return result.txId;
   }
 
-  sendAssetTransaction(
+  Future<String> sendAssetTransaction(
       {int amount, String destination, String note, int index}) async {
     // Get params for transactions
 
@@ -186,6 +188,8 @@ class AppBloc extends Bloc<AppEvent, AppState>
     final result = await repository.sendRawTransaction(rawtxn);
 
     logger.info(result);
+
+    return result.txId;
   }
 
   @override
@@ -219,16 +223,23 @@ class AppBloc extends Bloc<AppEvent, AppState>
   Stream<AppState> _mapSendToState(AppSend event) async* {
     final note = mantaWallet == null ? null : mantaWallet.session_id;
     final currentAsset = (state as AppHome).currentAsset;
+    String txid;
 
     if (currentAsset == -1) {
-      sendTransaction(
+      txid = await sendTransaction(
           destination: event.destination, amount: event.amount, note: note);
     } else {
-      sendAssetTransaction(
+      txid = await sendAssetTransaction(
           destination: event.destination,
           amount: event.amount,
           note: note,
           index: currentAsset);
+    }
+
+    if (mantaWallet != null) {
+      await mantaWallet.sendPayment(
+          transactionHash: txid, cryptoCurrency: 'ALGO-TESTNET');
+      mantaWallet = null;
     }
 
     yield (state as AppHome).toInitialState();

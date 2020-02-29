@@ -1,6 +1,6 @@
 import 'package:algorand_flutter/blocs/app_state.dart';
+import 'package:barcode_scan/barcode_scan.dart';
 import 'package:dart_algorand/dart_algorand.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:manta_dart/manta_wallet.dart';
 
 import 'app_event.dart';
@@ -24,9 +24,7 @@ class AppHomeSendSheetMapper with Mapper{
 
   Stream<AppState> _mapScanQRtoState(
       AppQRScan event, AppHomeSendSheet state) async* {
-    String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-        "#ff6666", "Cancel", true, ScanMode.QR);
-
+    String barcodeScanRes = await BarcodeScanner.scan();
     // Test Manta Url
     final mantaParsed = MantaWallet.parseUrl(barcodeScanRes);
 

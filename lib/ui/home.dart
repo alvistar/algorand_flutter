@@ -101,7 +101,8 @@ class HomePage extends StatelessWidget {
             }
           },
           child: SafeArea(
-            child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+            child:
+                Column(mainAxisAlignment: MainAxisAlignment.start, children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Card(
@@ -122,7 +123,8 @@ class HomePage extends StatelessWidget {
               ),
               Expanded(
                   child: transactionList(
-                      onRefresh: () => appBloc.addAsync(AppTransactionsUpdate()),
+                      onRefresh: () =>
+                          appBloc.addAsync(AppTransactionsUpdate()),
                       address: appBloc.state.base.account.address,
                       transactions: (appBloc.state as AppHome).transactions)),
               ButtonBar(

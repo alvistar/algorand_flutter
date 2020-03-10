@@ -5,7 +5,6 @@ import 'package:dart_algorand/dart_algorand.dart';
 
 part 'app_state.freezed.dart';
 
-
 @freezed
 abstract class BaseState with _$BaseState {
   factory BaseState({Account accountInfo, AlgoAccount account}) = _BaseState;
@@ -21,17 +20,17 @@ abstract class AppHome with _$AppHome implements AppState {
       {BaseState base,
       int balance,
       String unit,
-      @Default(const  {}) Map<String, int>  assets,
+      @Default(const {}) Map<String, int> assets,
       @Default(const []) List transactions,
       int currentAsset}) = AppHomeInitial;
 
   factory AppHome.ReceiveSheetState(
       {BaseState base,
-        int balance,
-        String unit,
-        @Default(const  {}) Map<String, int>  assets,
-        @Default(const []) List transactions,
-        int currentAsset}) = AppHomeReceiveSheet;
+      int balance,
+      String unit,
+      @Default(const {}) Map<String, int> assets,
+      @Default(const []) List transactions,
+      int currentAsset}) = AppHomeReceiveSheet;
 
   factory AppHome.SendSheetState(
       {BaseState base,
@@ -47,7 +46,7 @@ abstract class AppHome with _$AppHome implements AppState {
       {BaseState base,
       int balance,
       String unit,
-      Map<String, int>  assets,
+      Map<String, int> assets,
       List transactions,
       int currentAsset,
       Merchant merchant,
@@ -67,7 +66,7 @@ extension Utils on AppHome {
         destAddress: destAddress);
   }
 
-  AppHomeReceiveSheet toReceiveSheet ({int destAmount, String destAddress}) {
+  AppHomeReceiveSheet toReceiveSheet({int destAmount, String destAddress}) {
     return AppHome.ReceiveSheetState(
         base: base,
         balance: balance,
@@ -108,13 +107,14 @@ abstract class Backable {
 @freezed
 abstract class AppSeed with _$AppSeed implements AppState, Backable {
   factory AppSeed(
-      {BaseState base, AppState pstate, @Default(false) bool forwardable}) = _AppSeed;
+      {BaseState base,
+      AppState pstate,
+      @Default(false) bool forwardable}) = _AppSeed;
 }
 
 @freezed
 abstract class AppSettings with _$AppSettings implements AppState, Backable {
-  factory AppSettings({BaseState base, AppState pstate}) =
-      _AppSettings;
+  factory AppSettings({BaseState base, AppState pstate}) = _AppSettings;
 }
 
 @freezed

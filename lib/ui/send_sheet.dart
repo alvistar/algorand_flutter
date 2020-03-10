@@ -96,10 +96,7 @@ class SendSheetUIState extends State<SendSheet> {
                     return null;
                   },
                 ),
-                ButtonBar(
-                    alignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-
+                ButtonBar(alignment: MainAxisAlignment.spaceEvenly, children: [
                   RaisedButton(
                     child: Text('SCAN'),
                     textColor: Colors.white,

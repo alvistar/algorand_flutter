@@ -5,9 +5,8 @@ import 'app_event.dart';
 import 'mapper.dart';
 
 class AppSettingsMapper with Mapper {
-
-  Stream<AppState> mapAppSettingsToState(AppEvent event,
-      AppSettings state) async* {
+  Stream<AppState> mapAppSettingsToState(
+      AppEvent event, AppSettings state) async* {
     if (event is AppBack) {
       yield state.pstate;
     } else if (event is AppSeedReset) {
@@ -15,8 +14,7 @@ class AppSettingsMapper with Mapper {
       yield AppAccountSetup(base: state.base);
     } else if (event is AppSeedShow) {
       yield AppSeed(base: state.base, pstate: state);
-    }
-    else {
+    } else {
       throw UnimplementedError('$event not handled in $state');
     }
   }

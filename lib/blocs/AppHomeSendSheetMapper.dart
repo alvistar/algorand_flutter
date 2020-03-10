@@ -6,8 +6,7 @@ import 'package:manta_dart/manta_wallet.dart';
 import 'app_event.dart';
 import 'mapper.dart';
 
-class AppHomeSendSheetMapper with Mapper{
-
+class AppHomeSendSheetMapper with Mapper {
   Stream<AppState> mapAppHomeSendSheetToState(
       AppEvent event, AppHomeSendSheet state) async* {
     if (event is AppSendSheetDismissed) {
@@ -31,8 +30,8 @@ class AppHomeSendSheetMapper with Mapper{
     if (mantaParsed != null) {
       print("Manta Address!");
       appBloc.mantaWallet = MantaWallet(barcodeScanRes);
-      final envelope =
-          await appBloc.mantaWallet.getPaymentRequest(cryptoCurrency: "ALGO-TESTNET");
+      final envelope = await appBloc.mantaWallet
+          .getPaymentRequest(cryptoCurrency: "ALGO-TESTNET");
       final pr = envelope.unpack();
 
       yield state.toMantaSheet(

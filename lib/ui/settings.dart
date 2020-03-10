@@ -13,10 +13,12 @@ class Settings extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () { appBloc.add(AppBack());},
-          ),
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                appBloc.add(AppBack());
+              },
+            ),
             title: Text('Settings')),
         body: Column(
           children: <Widget>[
@@ -31,7 +33,9 @@ class Settings extends StatelessWidget {
                   Divider(),
                   ListTile(
                     title: Text('Reset Account'),
-                    onTap: () { appBloc.add(AppSeedReset());},
+                    onTap: () {
+                      appBloc.add(AppSeedReset());
+                    },
                   ),
                   Divider(),
                 ],

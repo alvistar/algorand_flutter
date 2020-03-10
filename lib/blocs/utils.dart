@@ -23,7 +23,6 @@ int getAssetIndex({algod.Account account, String asset}) {
 }
 
 int getBalance({algod.Account account, int asset}) {
-
   if (account == null) {
     return 0;
   }
@@ -32,7 +31,5 @@ int getBalance({algod.Account account, int asset}) {
     return account.amount;
   }
 
-  return getBalanceForAssetIndex(
-      account: account,
-      asset: asset);
+  return getBalanceForAssetIndex(account: account, asset: asset);
 }

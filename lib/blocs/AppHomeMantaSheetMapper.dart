@@ -4,9 +4,8 @@ import 'app_event.dart';
 import 'mapper.dart';
 
 class AppHomeMantaSheetMapper with Mapper {
-
-  Stream<AppState> mapAppHomeMantaSheetToState(AppEvent event,
-      AppHomeMantaSheet state) async* {
+  Stream<AppState> mapAppHomeMantaSheetToState(
+      AppEvent event, AppHomeMantaSheet state) async* {
     if (event is AppMantaSheetDismissed) {
       yield state.toSendSheet();
     } else if (event is AppSend) {

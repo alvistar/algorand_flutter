@@ -91,7 +91,6 @@ class AppAssetChanged extends AppEvent {
 
   @override
   List<Object> get props => [asset];
-
 }
 
 class AppImportSeedShow extends AppEvent {

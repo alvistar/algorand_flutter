@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class ReceiveSheet extends StatelessWidget {
-
   ReceiveSheet();
 
   @override
@@ -15,10 +14,9 @@ class ReceiveSheet extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         QrImage(
-          data: 'algorand://${appBloc.state.base.account.address}',
-          version: QrVersions.auto,
-          size: 200
-        )
+            data: 'algorand://${appBloc.state.base.account.address}',
+            version: QrVersions.auto,
+            size: 200)
       ],
     );
   }

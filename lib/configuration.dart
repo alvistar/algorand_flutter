@@ -8,7 +8,7 @@ class Configuration {
     prefs = await SharedPreferences.getInstance();
   }
 
-  set account (AlgoAccount account) {
+  set account(AlgoAccount account) {
     prefs.setString('private_key', account.private_key);
   }
 
@@ -20,13 +20,11 @@ class Configuration {
     }
 
     return AlgoAccount(
-      private_key: private_key,
-      address: address_from_private_key(private_key)
-    );
+        private_key: private_key,
+        address: address_from_private_key(private_key));
   }
 
   reset_account() {
     prefs.setString(('private_key'), null);
   }
-
 }

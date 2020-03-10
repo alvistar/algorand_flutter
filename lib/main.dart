@@ -29,8 +29,7 @@ class SimpleBlocDelegate extends BlocDelegate {
   @override
   void onTransition(Bloc bloc, Transition transition) {
     super.onTransition(bloc, transition);
-    logger.info(
-        "Transation ${transition.currentState.runtimeType} ->"
+    logger.info("Transation ${transition.currentState.runtimeType} ->"
         "${transition.nextState.runtimeType} ** event: ${transition.event}");
   }
 
@@ -46,7 +45,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await DotEnv().load('assets/.env');
-  print (DotEnv().env['ALGO_NODE']);
+  print(DotEnv().env['ALGO_NODE']);
 
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((LogRecord rec) {
@@ -68,7 +67,9 @@ class App extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: BlocProvider(create: (_) => AppBloc(configuration: configuration), child: AppPage()),
+      home: BlocProvider(
+          create: (_) => AppBloc(configuration: configuration),
+          child: AppPage()),
     );
   }
 }
@@ -78,25 +79,26 @@ class AppPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final appBloc = BlocProvider.of<AppBloc>(context);
 
-    return BlocBuilder<AppBloc, AppState>(
-        builder: (context, state) {
-          if (state is AppHome) {
-            return HomePage();
-          }
-          if (state is AppSeed) {
-            return ShowSeed();
-          }
-          if (state is AppImportSeed) {
-            return ImportSeed();
-          };
-          if (state is AppSettings) {
-            return Settings();
-          };
+    return BlocBuilder<AppBloc, AppState>(builder: (context, state) {
+      if (state is AppHome) {
+        return HomePage();
+      }
+      if (state is AppSeed) {
+        return ShowSeed();
+      }
+      if (state is AppImportSeed) {
+        return ImportSeed();
+      }
+      ;
+      if (state is AppSettings) {
+        return Settings();
+      }
+      ;
 
-          if (state is AppAccountSetup) {
-            return AccountSetup();
-          }
-          throw UnimplementedError();
+      if (state is AppAccountSetup) {
+        return AccountSetup();
+      }
+      throw UnimplementedError();
     });
   }
 }

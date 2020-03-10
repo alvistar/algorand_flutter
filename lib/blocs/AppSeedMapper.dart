@@ -11,8 +11,7 @@ class AppSeedMapper with Mapper {
           base: BaseState(account: state.base.account), currentAsset: -1);
     } else if (event is AppBack) {
       yield state.pstate;
-    }
-    else {
+    } else {
       throw UnimplementedError('$event not handled in $state');
     }
   }

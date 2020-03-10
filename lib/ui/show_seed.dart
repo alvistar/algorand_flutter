@@ -22,36 +22,37 @@ class ShowSeed extends StatelessWidget {
                   appBloc.add(AppBack());
                 })),
         body: Builder(
-          builder: (BuildContext context) => Column(
-            children: <Widget>[
-              Expanded(
-                  child: ListView(children: <Widget>[
-                ListTile(
-                    title: Text(s.base.account.address),
-                    subtitle: Text('Address'),
-                    trailing:
-                        copyWidget(s.base.account.address, context: context)),
-                ListTile(
-                  title: Text(s.base.account.private_key),
-                  subtitle: Text('Private Key'),
-                  trailing:
-                      copyWidget(s.base.account.private_key, context: context),
-                ),
-                ListTile(
-                  subtitle: Text('Seed'),
-                  title: Text(from_private_key(s.base.account.private_key)),
-                  trailing: copyWidget(
-                      from_private_key(s.base.account.private_key),
-                      context: context),
-                )
-              ])),
-              !s.forwardable
-                  ? SizedBox.shrink()
-                  : RaisedButton(
-                      child: Text('OKAY'),
-                      onPressed: () => appBloc.add(AppForward()),
-                    )
-            ],
+          builder: (BuildContext context) => SafeArea(
+            child: Column(
+              children: <Widget>[
+                Expanded(
+                    child: ListView(children: <Widget>[
+                  ListTile(
+                      title: Text(s.base.account.address),
+                      subtitle: Text('Address'),
+                      trailing:
+                          copyWidget(s.base.account.address, context: context)),
+                  ListTile(
+                    title: Text(s.base.account.private_key),
+                    subtitle: Text('Private Key'),
+                    trailing: copyWidget(s.base.account.private_key,
+                        context: context),
+                  ),
+                  ListTile(
+                    subtitle: Text('Seed'),
+                    title: Text(from_private_key(s.base.account.private_key)),
+                    trailing: copyWidget(
+                        from_private_key(s.base.account.private_key),
+                        context: context),
+                  )
+                ])),
+                if (s.forwardable)
+                  RaisedButton(
+                    child: Text('OKAY'),
+                    onPressed: () => appBloc.add(AppForward()),
+                  )
+              ],
+            ),
           ),
         ));
   }
